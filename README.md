@@ -1,1 +1,1 @@
-# Dive Log Server
+# MyDives
