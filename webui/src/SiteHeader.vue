@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, h } from 'vue'
+import { RouterLink } from 'vue-router'
 import { NLayout, NLayoutHeader, NMenu, NButton, NText } from 'naive-ui'
 const emit = defineEmits(['themeChangeRequested'])
 const props = defineProps({
@@ -10,22 +11,18 @@ const themeButtonLabel = computed(() => {
   return props.themeName === 'light' ? 'Dark' : 'Light'
 })
 
-const menuInstRef = ref()
 const menuOptions = ref([
   {
     key: 'home',
-    label: 'Home',
-    path: '/'
+    label: () => h(RouterLink, { to: '/' }, { default: () => 'Home' })
   },
   {
     key: 'dives',
-    label: 'Dives',
-    path: '/dives'
+    label: () => h(RouterLink, { to: '/dives' }, { default: () => 'Dives' })
   },
   {
     key: 'sites',
-    label: 'Sites',
-    path: '/sites'
+    label: () => h(RouterLink, { to: '/sites' }, { default: () => 'Sites' })
   }
 ])
 </script>
@@ -39,7 +36,7 @@ const menuOptions = ref([
     </n-text>
     <div class="flex-cont ofw-hidden">
       <n-menu
-        ref="menuInstRef"
+        class="nav-menu"
         responsive
         mode="horizontal"
         :options="menuOptions"
@@ -71,11 +68,14 @@ const menuOptions = ref([
   padding-left: 16px;
 }
 
-.nav-menu {
-  align-items: center;
+/* justify menu items that are nested in another flex container */
+:deep(.nav-menu > div:first-child) {
+  justify-content: center;
 }
 
 .nav-end {
   align-items: center;
+  justify-content: flex-end;
+  padding-right: 16px;
 }
 </style>
