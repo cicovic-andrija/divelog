@@ -5,3 +5,13 @@
 .ofw-hidden {
   overflow: hidden;
 }
+
+.loading-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 128px;
+}
+.loading-msg > img {
+  padding-right: 4px;
+}

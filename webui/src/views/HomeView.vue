@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { NText } from 'naive-ui'
 </script>
 
 <template>
-  <div>
-    <h1>Home</h1>
-  </div>
+  <n-text>
+    <span>Welcome!</span>
+  </n-text>
 </template>

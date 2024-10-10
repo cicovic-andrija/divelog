@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import {RouterView } from 'vue-router'
-import { NConfigProvider, darkTheme, lightTheme } from 'naive-ui'
+import { NConfigProvider, NGlobalStyle, darkTheme, lightTheme } from 'naive-ui'
 import SiteHeader from '@/SiteHeader.vue';
 
 const themeName = ref('light')
@@ -22,5 +22,6 @@ function changeTheme(): void {
   <n-config-provider :theme="theme">
     <site-header :themeName="themeName" @themeChangeRequested="changeTheme()"/>
     <router-view />
+    <n-global-style />
   </n-config-provider>
 </template>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { NLayout, NLayoutHeader, NMenu, NButton, NText } from 'naive-ui'
+const router = useRouter()
+
 const emit = defineEmits(['themeChangeRequested'])
 const props = defineProps({
   themeName: String
@@ -30,7 +32,7 @@ const menuOptions = ref([
 <template>
 <n-layout>
   <n-layout-header bordered class="nav">
-    <n-text class="nav-title">
+    <n-text class="nav-title" @click="router.push('/')">
       <img width="32px" src="./assets/scuba.svg">
       <span>MyDives</span>
     </n-text>
@@ -50,6 +52,15 @@ const menuOptions = ref([
       >
         {{ themeButtonLabel }}
       </n-button>
+      <n-button
+        size="small"
+        quaternary
+        tag="a"
+        href="https://github.com/cicovic-andrija/divelog"
+        target="_blank"
+      >
+        GitHub
+      </n-button>
     </div>
   </n-layout-header>
 </n-layout>
@@ -62,6 +73,7 @@ const menuOptions = ref([
 }
 
 .nav-title {
+  cursor: pointer;
   display: flex;
   align-items: center;
   font-size: 1rem;
