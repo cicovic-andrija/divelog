@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, provide } from 'vue'
 import {RouterView } from 'vue-router'
 import { NConfigProvider, NGlobalStyle, darkTheme, lightTheme } from 'naive-ui'
 import SiteHeader from '@/SiteHeader.vue';
 
 const themeName = ref('light')
+provide('themeName', themeName)
+
 const theme = computed(() => {
   return themeName.value === 'light' ? lightTheme : darkTheme
 })

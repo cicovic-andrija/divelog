@@ -33,7 +33,7 @@ const menuOptions = ref([
 <n-layout>
   <n-layout-header bordered class="nav">
     <n-text class="nav-title" @click="router.push('/')">
-      <img width="32px" src="./assets/scuba.svg">
+      <img width="32px" src="@/assets/scuba.svg">
       <span>MyDives</span>
     </n-text>
     <div class="flex-cont ofw-hidden">
