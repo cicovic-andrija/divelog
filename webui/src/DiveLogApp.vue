@@ -2,7 +2,7 @@
 import { ref, computed, provide } from 'vue'
 import {RouterView } from 'vue-router'
 import { NConfigProvider, NGlobalStyle, darkTheme, lightTheme } from 'naive-ui'
-import SiteHeader from '@/SiteHeader.vue';
+import SiteHeader from '@/components/SiteHeader.vue'
 
 const themeName = ref('light')
 provide('themeName', themeName)

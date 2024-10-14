@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { NText } from 'naive-ui'
+import { TIMEOUT } from '@/utils'
 
-const seconds = ref(0);
-const timeout: number = 30;
+const seconds = ref(0)
 
-let interval: number = 0;
+let interval: number = 0
 const status = computed(() => {
   return {
-    failed: seconds.value > timeout,
-    message: seconds.value > timeout ? 'Download failed Please refresh the page.' : 'Downloading dive data from the server...',
+    failed: seconds.value > TIMEOUT,
+    message: seconds.value > TIMEOUT ? 'Download failed. Please refresh the page.' : 'Downloading dive data from the server...',
     formattedTime: `${seconds.value}s`
   }
 })
 
 onMounted(() => {
   interval = setInterval(() => {
-    if (seconds.value <= timeout) {
+    if (seconds.value <= TIMEOUT) {
       seconds.value++
     }
-  }, 1000);
+  }, 1000)
 })
 
 onUnmounted(() => {
@@ -29,12 +29,9 @@ onUnmounted(() => {
 
 <template>
   <n-text class="loading-msg">
-    <div>
-      <i class="fas fa-spinner fa-spin"></i>
-      <img v-if="status.failed" class="msg-icon" src="@/assets/warning.svg">
-      <img v-else class="msg-icon" src="@/assets/download.svg">
-      <span>{{ status.message }}</span>
-    </div>
+    <img v-if="status.failed" class="msg-icon" src="@/assets/warning.svg">
+    <img v-else class="msg-icon" src="@/assets/download.svg">
+    <span>{{ status.message }}</span>
     <span v-if="!status.failed">{{ status.formattedTime }}</span>
   </n-text>
 </template>

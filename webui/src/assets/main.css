@@ -10,15 +10,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-items: center;
   padding-top: 128px;
 }
-.loading-msg > div {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-img.msg-icon {
+.msg-icon {
   width: 1.5rem;
-  padding-right: 6px;
+  padding-bottom: 6px;
 }

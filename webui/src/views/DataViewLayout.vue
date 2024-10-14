@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, h } from 'vue'
 import { RouterLink } from 'vue-router'
-import { NLayout, NLayoutSider, NMenu } from 'naive-ui';
+import { NLayout, NLayoutSider, NMenu, NText, NCard, NSwitch } from 'naive-ui';
 
 const vertMenuOptions = ref([
   {
@@ -18,12 +18,12 @@ const vertMenuOptions = ref([
   }
 ])
 
+const isPretty = ref(true);
+
 </script>
 
 <template>
-  <n-layout
-    :has-sider="true"
-  >
+  <n-layout :has-sider="true">
     <n-layout-sider
       :native-scrollbar="false"
       :collapsed-width="0"
@@ -36,5 +36,30 @@ const vertMenuOptions = ref([
         :options="vertMenuOptions"
       />
     </n-layout-sider>
+
+    <n-layout content-style="padding: 48px">
+      <div class="data-repr-toggle">
+        <n-text style="padding: 6px">Representation</n-text>
+        <n-switch v-model:value="isPretty" :round="false">
+          <template #checked>
+            Pretty
+          </template>
+          <template #unchecked>
+            JSON
+          </template>
+        </n-switch>
+      </div>
+
+      <n-card embedded title="Dive"></n-card>
+    </n-layout>
   </n-layout>
 </template>
+
+<style scoped>
+.data-repr-toggle {
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+</style>

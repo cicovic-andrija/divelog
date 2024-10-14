@@ -17,7 +17,7 @@ const router = createRouter({
     {
       path: '/sites',
       name: 'sites',
-      component: () => import('@/views/SitesView.vue')
+      component: () => import('@/views/DataViewLayout.vue')
     },
     {
       path: '/:pathMatch(.*)*',

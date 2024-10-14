@@ -32,13 +32,13 @@ const themeName: string = inject('themeName', 'light' /* default */)
         Explore
       </n-button>
     </div>
-  <n-layout-footer bordered>
-    <div class="footer-content">
-      <n-p>
-        Made by Andrija Cicović - 2025
-      </n-p>
-    </div>
-  </n-layout-footer>
+    <n-layout-footer bordered>
+      <div class="footer-content">
+        <n-p>
+          Made by Andrija Cicović - 2025
+        </n-p>
+      </div>
+    </n-layout-footer>
   </n-layout>
 </template>
 
