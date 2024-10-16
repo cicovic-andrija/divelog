@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { ref, h } from 'vue'
+import { ref } from 'vue'
 import { NH2 } from 'naive-ui'
 import JsonBlock from '@/components/JsonBlock.vue'
 defineProps({
     isPretty: Boolean
 })
-
 const jsonData = ref(
   {"a": 123, "b":456, "c": ["a", "b", "c"], "d": true}
 )
-
 </script>
 
 <template>

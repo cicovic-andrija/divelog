@@ -39,11 +39,11 @@ const selectedOption = computed(() => {
     return null
 })
 
-const menuRef = ref()
+const menu = ref()
 let lastWindowInnerWidth = window.innerWidth
 window.addEventListener('resize', () => {
   if (window.innerWidth > lastWindowInnerWidth) {
-    menuRef.value?.deriveResponsiveState()
+    menu.value?.deriveResponsiveState()
   }
   lastWindowInnerWidth = window.innerWidth
 })
@@ -58,7 +58,7 @@ window.addEventListener('resize', () => {
       </n-text>
       <div class="flex-cont ofw-hidden">
         <n-menu
-          ref="menuRef"
+          ref="menu"
           responsive
           mode="horizontal"
           :value="selectedOption"

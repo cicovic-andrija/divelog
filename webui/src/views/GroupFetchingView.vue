@@ -1,16 +1,31 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useDiveDescStore } from '@/stores/diveDescStore'
+import { diveIdToRoute, sleep } from '@/utils'
+import { DEV_PAUSE_MS } from '@/constants'
 import LoadingMessage from '@/components/LoadingMessage.vue'
-const route = useRoute()
 
-const msg = computed(() => {
-  if (route.name === 'dives') {
-    return 'Downloading dive data from the server...'
-  } else if (route.name === 'sites') {
-    return 'Downloading dive site data from the server...'
-  } else {
-    return '???'
+const route = useRoute()
+const router = useRouter()
+const store = useDiveDescStore()
+
+const msg = computed(() =>
+  route.name === 'dives' ? 'Downloading dive data...' :
+  route.name === 'sites' ? 'Downloading dive site data...' : '?'
+)
+
+onMounted(async () => {
+  if (import.meta.env.DEV) {
+    await sleep(DEV_PAUSE_MS)
+  }
+
+  if (store.diveDescriptors === undefined) {
+    await store.fetchAll()
+  }
+
+  if (store.diveDescriptors !== undefined) {
+    router.push(diveIdToRoute(store.diveDescriptors[0].id))
   }
 })
 </script>

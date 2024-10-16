@@ -1,3 +1,5 @@
+import type { DiveDesc } from "./types"
+
 export function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -12,4 +14,16 @@ export function saveStringToLocalStorage(key: string, value: string): void {
 
 export function loadStringFromLocalStorage(key: string): string | null {
     return localStorage.getItem(key)
+}
+
+export function diveIdToRoute(id: number): string {
+    return `/dives/${paddedID(id)}`
+}
+
+export function paddedID(id: number): string {
+    return id.toString().padStart(4, '0')
+}
+
+export function diveDescToLabel(desc: DiveDesc): string {
+    return `${desc.cardinal}. ${desc.label}`
 }
