@@ -13,17 +13,6 @@ const themeButtonLabel = computed(() => {
   return props.themeName === 'light' ? 'Dark' : 'Light'
 })
 
-const selectedMenu = computed(() => {
-    if (route.name === 'home')
-      return 'home'
-    if (/\/dives/.test(route.path))
-      return 'dives'
-    if (/\/sites/.test(route.path))
-      return 'sites'
-
-    return null
-})
-
 const menuOptions = ref([
   {
     key: 'home',
@@ -38,6 +27,26 @@ const menuOptions = ref([
     label: () => h(RouterLink, { to: '/sites' }, { default: () => 'Sites' })
   }
 ])
+
+const selectedOption = computed(() => {
+    if (route.name === 'home')
+      return 'home'
+    if (/\/dives/.test(route.path))
+      return 'dives'
+    if (/\/sites/.test(route.path))
+      return 'sites'
+
+    return null
+})
+
+const menuRef = ref()
+let lastWindowInnerWidth = window.innerWidth
+window.addEventListener('resize', () => {
+  if (window.innerWidth > lastWindowInnerWidth) {
+    menuRef.value?.deriveResponsiveState()
+  }
+  lastWindowInnerWidth = window.innerWidth
+})
 </script>
 
 <template>
@@ -49,9 +58,10 @@ const menuOptions = ref([
       </n-text>
       <div class="flex-cont ofw-hidden">
         <n-menu
+          ref="menuRef"
           responsive
           mode="horizontal"
-          :value="selectedMenu"
+          :value="selectedOption"
           :options="menuOptions"
           class="nav-menu"
         />

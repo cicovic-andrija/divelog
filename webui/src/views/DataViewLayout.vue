@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, h } from 'vue'
 import { RouterLink } from 'vue-router'
-import { NLayout, NLayoutSider, NMenu, NText, NCard, NSwitch } from 'naive-ui';
+import { NLayout, NLayoutSider, NMenu, NText, NSwitch, NH1 } from 'naive-ui';
+import DiveData from '@/components/DiveData.vue';
 
 const vertMenuOptions = ref([
   {
@@ -18,7 +19,7 @@ const vertMenuOptions = ref([
   }
 ])
 
-const isPretty = ref(true);
+const isPretty = ref(!import.meta.env.DEV)
 
 </script>
 
@@ -28,7 +29,8 @@ const isPretty = ref(true);
       :native-scrollbar="false"
       :collapsed-width="0"
       collapse-mode="transform"
-      collapsed-trigger-style="right: -16px;"
+      trigger-style="top: 240px;"
+      collapsed-trigger-style="top: 240px; right: -16px;"
       bordered
       show-trigger="arrow-circle"
     >
@@ -37,9 +39,11 @@ const isPretty = ref(true);
       />
     </n-layout-sider>
 
-    <n-layout content-style="padding: 48px">
+    <n-layout content-style="padding: 16px 32px 16px 32px;">
+      <n-h1>Dive #2</n-h1>
+
       <div class="data-repr-toggle">
-        <n-text style="padding: 6px">Representation</n-text>
+        <n-text style="padding-right: 8px">Data View</n-text>
         <n-switch v-model:value="isPretty" :round="false">
           <template #checked>
             Pretty
@@ -50,14 +54,14 @@ const isPretty = ref(true);
         </n-switch>
       </div>
 
-      <n-card embedded title="Dive"></n-card>
+      <dive-data :is-pretty="isPretty" />
     </n-layout>
   </n-layout>
 </template>
 
 <style scoped>
 .data-repr-toggle {
-  padding: 6px;
+  padding-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: right;

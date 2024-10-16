@@ -12,17 +12,29 @@ const router = createRouter({
     {
       path: '/dives',
       name: 'dives',
-      component: () => import('@/views/DivesView.vue')
+      component: () => import('@/views/GroupFetchingView.vue')
     },
     {
       path: '/sites',
       name: 'sites',
-      component: () => import('@/views/DataViewLayout.vue')
+      component: () => import('@/views/GroupFetchingView.vue')
+    },
+    {
+      path: '/dives/:diveID(\\d{4})',
+      name: 'one-dive',
+      component: () => import('@/views/DataViewLayout.vue'),
+      props: true
+    },
+    {
+      path: '/sites/:siteID(\\d{4})',
+      name: 'one-site',
+      component: () => import('@/views/DataViewLayout.vue'),
+      props: true
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('@/views/NotFoundView.vue')
+      component: () => import('@/views/NotFound.vue')
     }
   ]
 })

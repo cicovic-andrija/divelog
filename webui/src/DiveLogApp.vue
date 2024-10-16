@@ -2,9 +2,10 @@
 import { ref, computed, provide } from 'vue'
 import {RouterView } from 'vue-router'
 import { NConfigProvider, NGlobalStyle, darkTheme, lightTheme } from 'naive-ui'
+import { saveStringToLocalStorage, loadStringFromLocalStorage } from '@/utils'
 import SiteHeader from '@/components/SiteHeader.vue'
 
-const themeName = ref('light')
+const themeName = ref(savedThemeNameOrDefault())
 provide('themeName', themeName)
 
 const theme = computed(() => {
@@ -17,6 +18,15 @@ function changeTheme(): void {
   } else {
     themeName.value = 'light'
   }
+  saveThemeName(themeName.value)
+}
+
+function savedThemeNameOrDefault(): string {
+  return loadStringFromLocalStorage('divelogThemeName') ?? 'light'
+}
+
+function saveThemeName(themeName: string): void {
+  saveStringToLocalStorage('divelogThemeName', themeName)
 }
 </script>
 
