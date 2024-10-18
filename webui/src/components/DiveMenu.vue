@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, h } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { NMenu } from 'naive-ui'
 import { useDiveDescStore } from '@/stores/diveDescStore'
 import { sleep, paddedID, diveIdToRoute, diveDescToLabel } from '@/utils'
 import { DEV_PAUSE_MS } from '@/constants'
 import GhostMenu from './GhostMenu.vue'
+const router = useRouter()
 const store = useDiveDescStore()
 const loaded = ref(false)
 const props = defineProps({
@@ -35,6 +36,13 @@ onMounted(async () => {
 
   await store.fetchAll()
   loaded.value = true
+
+  if (props.diveId == 0) {
+    const first = store.firstId()
+    if (first !== undefined) {
+      router.replace({ path: `/dives/${paddedID(first)}` })
+    }
+  }
 })
 </script>
 

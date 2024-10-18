@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, h } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { NMenu } from 'naive-ui'
 import { useSiteDescStore } from '@/stores/siteDescStore'
 import { sleep, paddedID, siteIdToRoute } from '@/utils'
 import { DEV_PAUSE_MS } from '@/constants'
 import GhostMenu from './GhostMenu.vue'
+const router = useRouter()
 const store = useSiteDescStore()
 const loaded = ref(false)
 const props = defineProps({
@@ -26,6 +27,13 @@ onMounted(async () => {
 
   await store.fetchAll()
   loaded.value = true
+
+  if (props.siteId == 0) {
+    const first = store.firstId()
+    if (first !== undefined) {
+      router.replace({ path: `/sites/${paddedID(first)}` })
+    }
+  }
 })
 </script>
 

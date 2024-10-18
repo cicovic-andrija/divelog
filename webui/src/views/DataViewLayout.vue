@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, provide } from 'vue'
+import { ref, computed, provide, watch } from 'vue'
 import { NLayout, NLayoutSider, NText, NSwitch } from 'naive-ui'
 import { useResourceTitle } from '@/composables/useResourceTitle'
 import LoadingTitle from '@/components/LoadingTitle.vue'
@@ -13,10 +13,11 @@ const props = defineProps({
 })
 const isDiveSite = computed(() => props.diveId === undefined)
 const resourceId = computed(() => props.diveId ?? props.siteId ?? 0)
-const key = computed(() => `${isDiveSite.value ? 'd' : 's'}-${resourceId.value}`)
+const key = computed(() => `${isDiveSite.value ? 's' : 'd'}-${resourceId.value}`)
 const isPretty = ref<boolean>(!import.meta.env.DEV)
 
 const resourceTitle = useResourceTitle()
+watch(key, () => { resourceTitle.setResourceTitle(undefined) })
 provide('resourceTitle', resourceTitle)
 </script>
 

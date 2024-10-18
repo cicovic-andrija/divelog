@@ -1,4 +1,4 @@
-import type { DiveDesc } from "./types"
+import type { Dive, DiveDesc } from "@/types"
 
 export function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -30,4 +30,8 @@ export function paddedID(id: number): string {
 
 export function diveDescToLabel(desc: DiveDesc): string {
     return `${desc.cardinal}. ${desc.label}`
+}
+
+export function composeDiveTitle(dive: Dive): string {
+    return `Dive ${dive.cardinal}. ${dive.label}`
 }
