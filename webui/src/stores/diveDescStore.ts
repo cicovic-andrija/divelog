@@ -1,16 +1,15 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { type DiveDesc, type DiveTripDesc } from '@/types'
+import { type DiveTripDesc } from '@/types'
 
 export const useDiveDescStore = defineStore('diveDescriptors', () => {
-    const diveDescriptors = ref<DiveTripDesc[]>()
+const diveDescriptors = ref<DiveTripDesc[]>()
 
-    const current = computed(() => diveDescriptors.value?.[0].descriptors[0])
-
-    async function fetchAll(): Promise<void> {
+async function fetchAll(): Promise<void> {
+    if (diveDescriptors.value === undefined) {
         diveDescriptors.value = [
             {
-                trip: 'Malta',
+                label: 'Malta',
                 id: 1,
                 descriptors: [
                     {
@@ -26,7 +25,7 @@ export const useDiveDescStore = defineStore('diveDescriptors', () => {
                 ],
             },
             {
-                trip: 'Cyprus',
+                label: 'Cyprus',
                 id: 2,
                 descriptors: [
                     {
@@ -38,6 +37,7 @@ export const useDiveDescStore = defineStore('diveDescriptors', () => {
             },
         ]
     }
+}
 
-    return { diveDescriptors, current, fetchAll }
+return { diveDescriptors, fetchAll }
 })

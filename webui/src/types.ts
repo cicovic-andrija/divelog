@@ -6,6 +6,23 @@ export interface DiveDesc {
 
 export interface DiveTripDesc {
     id: number
-    trip: string
+    label: string
     descriptors: DiveDesc[]
+}
+
+export interface DiveSiteDesc {
+    id: number
+    label: string
+}
+
+export interface Dive {
+    id: number
+    label: string
+    cardinal: number
+    max_depth: string
+}
+
+export interface DiveSite {
+    id: number
+    label: string
 }

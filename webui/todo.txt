@@ -1,0 +1,5 @@
+2024-10-18 @refactor Remove .loading-msg class
+2024-10-18 @ux Implement ghost components
+2024-10-18 @refactor Lose generic loading messages
+2024-10-18 @ux Implement support for mobile (xs)
+2024-10-18 @core Conditionally await fetch operations?

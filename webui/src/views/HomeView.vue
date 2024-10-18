@@ -3,7 +3,6 @@ import { inject } from 'vue'
 import { useRouter } from 'vue-router';
 import { NLayout, NLayoutFooter, NH1, NP, NButton } from 'naive-ui'
 const router = useRouter()
-
 const themeName: string = inject('themeName', 'light' /* default */)
 </script>
 

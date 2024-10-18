@@ -20,6 +20,10 @@ export function diveIdToRoute(id: number): string {
     return `/dives/${paddedID(id)}`
 }
 
+export function siteIdToRoute(id: number): string {
+    return `/sites/${paddedID(id)}`
+}
+
 export function paddedID(id: number): string {
     return id.toString().padStart(4, '0')
 }

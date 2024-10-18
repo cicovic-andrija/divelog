@@ -1,81 +1,47 @@
 <script setup lang="ts">
-import { onMounted, ref, computed, h } from 'vue'
-import { RouterLink } from 'vue-router'
-import { useDiveDescStore } from '@/stores/diveDescStore';
-import { NLayout, NLayoutSider, NMenu, NText, NSwitch, NH1 } from 'naive-ui'
-import { diveDescToLabel, diveIdToRoute, paddedID, sleep } from '@/utils'
-import { DEV_PAUSE_MS } from '@/constants'
+import { ref, computed, provide } from 'vue'
+import { NLayout, NLayoutSider, NText, NSwitch } from 'naive-ui'
+import { useResourceTitle } from '@/composables/useResourceTitle'
+import LoadingTitle from '@/components/LoadingTitle.vue'
+import DiveMenu from '@/components/DiveMenu.vue'
 import DiveData from '@/components/DiveData.vue'
-import LoadingMessage from '@/components/LoadingMessage.vue'
-const store = useDiveDescStore()
+import SiteMenu from '@/components/SiteMenu.vue'
+import SiteData from '@/components/SiteData.vue'
 const props = defineProps({
-  diveID: String,
-  siteID: String
+  diveId: Number,
+  siteId: Number
 })
+const isDiveSite = computed(() => props.diveId === undefined)
+const resourceId = computed(() => props.diveId ?? props.siteId ?? 0)
+const key = computed(() => `${isDiveSite.value ? 'd' : 's'}-${resourceId.value}`)
+const isPretty = ref<boolean>(!import.meta.env.DEV)
 
-const vertMenuOptions = computed(() => store.diveDescriptors?.map(t => ({
-  key: `o-t-${paddedID(t.id)}`,
-  type: 'group',
-  label: `${t.trip}`,
-  children: t.descriptors.map(d => ({
-    key: `o-d-${paddedID(d.id)}`,
-    label: () => h(
-      RouterLink,
-      { to: diveIdToRoute(d.id) },
-      { default: () => diveDescToLabel(d) }
-    ),
-  })),
-})))
-
-const selectedOption = computed(() => {
-  if (props.diveID !== undefined) {
-    const num: number = Number(props.diveID)
-    return isNaN(num) ? null : `o-d-${paddedID(num)}`
-  }
-  if (props.siteID !== undefined) {
-    const num: number = Number(props.siteID)
-    return isNaN(num) ? null : `o-s-${paddedID(num)}`
-  }
-  return null
-})
-
-onMounted(async () => {
-  if (import.meta.env.DEV) {
-    await sleep(DEV_PAUSE_MS)
-  }
-
-  if (store.diveDescriptors === undefined) {
-    await store.fetchAll()
-  }
-})
-
-const isPretty = ref(!import.meta.env.DEV)
+const resourceTitle = useResourceTitle()
+provide('resourceTitle', resourceTitle)
 </script>
 
 <template>
   <n-layout :has-sider="true">
+    <!-- Side Menu -->
     <n-layout-sider
-      v-if="store.current"
       :native-scrollbar="false"
       :collapsed-width="0"
       collapse-mode="transform"
-      trigger-style="top: 196px;"
-      collapsed-trigger-style="top: 196px; right: -16px;"
+      trigger-style="top: 40vh;"
+      collapsed-trigger-style="top: 40vh; right: -16px;"
       bordered
       show-trigger="arrow-circle"
     >
-      <n-menu
-        :options="vertMenuOptions"
-        :value="selectedOption"
-      />
+      <site-menu v-if="isDiveSite" :site-id="resourceId" />
+      <dive-menu v-else :dive-id="resourceId" />
     </n-layout-sider>
 
+    <!-- content-class doesn't work for some reason -->
     <n-layout content-style="padding: 16px 32px 16px 32px;">
-      <n-h1 v-if="store.current">
-        Dive {{ diveDescToLabel(store.current) }}
-      </n-h1>
-
-      <div v-if="store.current" class="data-repr-toggle">
+      <!-- Title -->
+      <loading-title :key="key" />
+      <!-- Toggle -->
+      <div class="data-repr-toggle">
         <n-text style="padding-right: 8px">Data View</n-text>
         <n-switch v-model:value="isPretty" :round="false">
           <template #checked>
@@ -86,9 +52,9 @@ const isPretty = ref(!import.meta.env.DEV)
           </template>
         </n-switch>
       </div>
-
-      <dive-data v-if="store.current" :is-pretty="isPretty" />
-      <loading-message v-else msg="Downloading details of the dive..." />
+      <!-- Main -->
+      <site-data v-if="isDiveSite" :site-id="resourceId" :is-pretty="isPretty" />
+      <dive-data v-else :dive-id="resourceId" :is-pretty="isPretty" />
     </n-layout>
   </n-layout>
 </template>
