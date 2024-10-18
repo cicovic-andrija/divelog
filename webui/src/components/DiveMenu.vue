@@ -3,8 +3,7 @@ import { onMounted, ref, computed, h } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { NMenu } from 'naive-ui'
 import { useDiveDescStore } from '@/stores/diveDescStore'
-import { sleep, paddedID, diveIdToRoute, diveDescToLabel } from '@/utils'
-import { DEV_PAUSE_MS } from '@/constants'
+import { paddedID, diveIdToRoute, diveDescToLabel } from '@/utils'
 import GhostMenu from './GhostMenu.vue'
 const router = useRouter()
 const store = useDiveDescStore()
@@ -30,20 +29,20 @@ const menuOptions = computed(() => store.diveDescriptors?.map(t => ({
 const selectedOption = computed(() => `o-d-${paddedID(props.diveId ?? 0)}`)
 
 onMounted(async () => {
-  if (import.meta.env.DEV) {
-    await sleep(DEV_PAUSE_MS)
-  }
-
+  // devtest: sleep
   await store.fetchAll()
   loaded.value = true
-
   if (props.diveId == 0) {
-    const first = store.firstId()
-    if (first !== undefined) {
-      router.replace({ path: `/dives/${paddedID(first)}` })
-    }
+    loadFirst()
   }
 })
+
+function loadFirst(): void {
+  const first = store.firstId()
+  if (first) {
+    router.replace({ path: `/dives/${paddedID(first)}` })
+  }
+}
 </script>
 
 <template>

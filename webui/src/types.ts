@@ -26,3 +26,9 @@ export interface DiveSite {
     id: number
     label: string
 }
+
+export interface StatusResponse {
+    ok: boolean
+    status: number | null
+    error: any
+}

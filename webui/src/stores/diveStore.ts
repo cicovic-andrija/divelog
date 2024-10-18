@@ -1,8 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { type Dive } from '@/types'
-import { sleep } from '@/utils'
-import { DEV_PAUSE_MS } from '@/constants'
 
 export const useDiveStore = defineStore('dives', () => {
     const dives = ref<Map<number, Dive>>(new Map<number, Dive>([
@@ -27,7 +25,6 @@ export const useDiveStore = defineStore('dives', () => {
     ]))
 
     async function find(id: number) {
-        await sleep(DEV_PAUSE_MS)
         return dives.value.get(id)
     }
 

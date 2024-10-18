@@ -1,41 +1,35 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { type DiveTripDesc } from '@/types'
+import { type DiveTripDesc, type StatusResponse } from '@/types'
 
 export const useDiveDescStore = defineStore('diveDescriptors', () => {
   const diveDescriptors = ref<DiveTripDesc[]>()
 
-  async function fetchAll(): Promise<void> {
+  async function fetchAll(): Promise<StatusResponse> {
     if (diveDescriptors.value === undefined) {
-      diveDescriptors.value = [
-        {
-            label: 'Malta',
-            id: 1,
-            descriptors: [
-                {
-                    id: 1,
-                    label: 'Um El Faroud',
-                    cardinal: 1,
-                },
-                {
-                    id: 2,
-                    label: 'Tugboat Rozi',
-                    cardinal: 2,
-                },
-            ],
-        },
-        {
-            label: 'Cyprus',
-            id: 2,
-            descriptors: [
-                {
-                    id: 3,
-                    label: 'Zenobia',
-                    cardinal: 3,
-                },
-            ],
-        },
-      ]
+      try {
+        const resp = await fetch('https://my-json-server.typicode.com/cicovic-andrija/jsonmock/trips')
+        const body = resp.ok ? await resp.json() : undefined
+        if (body) {
+          diveDescriptors.value = body
+        }
+        return {
+          ok: diveDescriptors.value !== undefined,
+          status: resp.status,
+          error: null
+        }
+      } catch (e) {
+        return {
+          ok: false,
+          status: 0,
+          error: e
+        }
+      }
+    }
+    return {
+      ok: true,
+      status: 200,
+      error: null
     }
   }
 

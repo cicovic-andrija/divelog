@@ -3,8 +3,7 @@ import { onMounted, ref, computed, h } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { NMenu } from 'naive-ui'
 import { useSiteDescStore } from '@/stores/siteDescStore'
-import { sleep, paddedID, siteIdToRoute } from '@/utils'
-import { DEV_PAUSE_MS } from '@/constants'
+import { paddedID, siteIdToRoute } from '@/utils'
 import GhostMenu from './GhostMenu.vue'
 const router = useRouter()
 const store = useSiteDescStore()
@@ -21,20 +20,20 @@ const menuOptions = computed(() => store.siteDescriptors?.map(s => ({
 const selectedOption = computed(() => `o-s-${paddedID(props.siteId ?? 0)}`)
 
 onMounted(async () => {
-  if (import.meta.env.DEV) {
-    await sleep(DEV_PAUSE_MS)
-  }
-
+  // devtest: sleep
   await store.fetchAll()
   loaded.value = true
-
   if (props.siteId == 0) {
-    const first = store.firstId()
-    if (first !== undefined) {
-      router.replace({ path: `/sites/${paddedID(first)}` })
-    }
+    loadFirst()
   }
 })
+
+function loadFirst(): void {
+  const first = store.firstId()
+  if (first) {
+    router.replace({ path: `/sites/${paddedID(first)}` })
+  }
+}
 </script>
 
 <template>

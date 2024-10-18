@@ -33,8 +33,9 @@ provide('resourceTitle', resourceTitle)
       bordered
       show-trigger="arrow-circle"
     >
-      <site-menu v-if="isDiveSite" :site-id="resourceId" />
-      <dive-menu v-else :dive-id="resourceId" />
+      <!-- siteId/diveId are passed as keys because v-if/else branches must have unique keys -->
+      <site-menu v-if="isDiveSite" :site-id="resourceId" :key="siteId" />
+      <dive-menu v-else :dive-id="resourceId" :key="diveId" />
     </n-layout-sider>
 
     <!-- content-class doesn't work for some reason -->
