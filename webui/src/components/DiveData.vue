@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, inject, ref, watch } from 'vue'
+import { NCard, NGrid, NGi } from 'naive-ui'
 import { useDiveStore } from '@/stores/diveStore'
 import JsonBlock from '@/components/JsonBlock.vue'
 import { type Dive } from '@/types'
@@ -35,6 +36,14 @@ async function loadDive(id: number | undefined): Promise<Dive | undefined> {
   <div v-if="dive">
     <div v-if="!isPretty">
       <json-block title="Details" :object="dive" />
+    </div>
+    <div v-else>
+      <n-card title="Details" size="large">
+        <n-grid :cols="2">
+          <n-gi>a</n-gi>
+          <n-gi>b</n-gi>
+        </n-grid>
+      </n-card>
     </div>
   </div>
 </template>

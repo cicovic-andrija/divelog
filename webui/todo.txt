@@ -1,7 +1,8 @@
-2024-10-18 @refactor Remove .loading-msg class
-2024-10-18 @ux Implement ghost components
-2024-10-18 @refactor Lose generic loading messages
 2024-10-18 @ux Implement support for mobile (xs)
 2024-10-18 @core Conditionally await fetch operations?
-x 2024-10-18 2024-10-18 @refactor Reset resourceTitle based on key
+
 x 2024-10-18 2024-10-18 @core Dynamically determine first id
+x 2024-10-18 2024-10-18 @refactor Reset resourceTitle based on key
+x 2024-10-20 2024-10-18 @refactor Lose generic loading messages
+x 2024-10-20 2024-10-18 @refactor Remove .loading-msg class
+x 2024-10-20 2024-10-18 @ux Implement ghost components

@@ -31,7 +31,7 @@ const selectedOption = computed(() => `o-d-${paddedID(props.diveId ?? 0)}`)
 onMounted(async () => {
   // devtest: sleep
   await store.fetchAll()
-  loaded.value = true
+  loaded.value = store.diveDescriptors !== undefined
   if (props.diveId == 0) {
     loadFirst()
   }

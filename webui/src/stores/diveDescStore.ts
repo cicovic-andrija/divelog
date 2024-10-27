@@ -12,6 +12,7 @@ export const useDiveDescStore = defineStore('diveDescriptors', () => {
         const body = resp.ok ? await resp.json() : undefined
         if (body) {
           diveDescriptors.value = body
+          diveDescriptors.value?.sort((a, b) => a.id - b.id)
         }
         return {
           ok: diveDescriptors.value !== undefined,

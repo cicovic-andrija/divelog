@@ -20,12 +20,11 @@ const themeName: string = inject('themeName', 'light' /* default */)
           <a href="https://go.dev/" target="_blank">Go</a>,
           <a href="https://vuejs.org/" target="_blank">Vue 3</a>,
           <a href="https://www.naiveui.com/" target="_blank">NaiveUI</a> and
-          <a href="https://subsurface-divelog.org/" target="_blank">Subsurface</a>
+          <a href="https://subsurface-divelog.org/" target="_blank">Subsurface</a>.
       </n-p>
       <n-button
         type="primary"
         style="width: fit-content;"
-        :ghost="themeName === 'dark'"
         @click="router.push('/dives')"
       >
         Explore
