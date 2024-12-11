@@ -1,12 +1,8 @@
-package server
+package subsurface
 
 import (
 	"encoding/xml"
 )
-
-type SubDecoder struct {
-	XMLDecoder *xml.Decoder
-}
 
 type SiteXML struct {
 	XMLName xml.Name `xml:"site"`
