@@ -62,3 +62,14 @@ func (h Handler) HandleGeoData(id int, cat int, label string) {
 	fmt.Printf("\t\tGEO_DATA\n")
 	fmt.Printf("\t\t\tCATEGORY = %d\n\t\t\tLABEL = %q\n", cat, label)
 }
+
+func (h Handler) HandleDiveTrip(label string) int {
+	fmt.Printf("\tDIVE_TRIP %q\n", label)
+	return 0
+}
+
+func (h Handler) HandleDive(tripID int, diveNum string) int {
+	fmt.Printf("\t\tDIVE\n")
+	fmt.Printf("\t\t\tNUMBER = %s\n", diveNum)
+	return 0
+}

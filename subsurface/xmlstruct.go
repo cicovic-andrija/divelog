@@ -16,3 +16,7 @@ type GeoXML struct {
 	Cat   string `xml:"cat,attr"`
 	Value string `xml:"value,attr"`
 }
+
+type DiveXML struct {
+	Number string `xml:"number,attr"`
+}

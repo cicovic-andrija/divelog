@@ -21,6 +21,8 @@ type Handler interface {
 	HandleSkip(element string)
 	HandleDiveSite(uuid string, name string, coords string) int
 	HandleGeoData(siteID int, cat int, label string)
+	HandleDiveTrip(label string) int
+	HandleDive(tripID int, diveNum string) int
 }
 
 type Decoder struct {
@@ -62,6 +64,8 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 
 	// <divesites>
 	if _, err = decoder.ExpectStart("divesites"); err != nil {
+		// the database may contain no dive site entries, but this
+		// decoder will report it as a format error
 		return err
 	}
 
@@ -81,12 +85,49 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 					} else {
 						return ErrInvalidFormat
 					}
-
 				}
 			}
 			// </site>
 		} else {
 			// </divesites>
+			break
+		}
+	}
+
+	// <dives>
+	if _, err = decoder.ExpectStart("dives"); err != nil {
+		// the database may contain no dive entries, or only dive entries,
+		// or combined trip and dive entries, but this decoder
+		// will report it as a format error
+		return err
+	}
+
+	for {
+		if startTag, err = decoder.NextOrEnd("trip", "dives"); err != nil {
+			return err
+		}
+		if startTag != nil {
+			// <trip ...> 1..N
+			location, _ := FindAttribute(startTag, "location")
+			tripID := h.HandleDiveTrip(location)
+			for {
+				if startTag, err = decoder.NextOrEnd("dive", "trip"); err != nil {
+					return err
+				}
+				if startTag != nil {
+					// <dive ...> 1..N
+					if diveXML, err := DecodeDiveXML(decoder, startTag); err != nil {
+						return err
+					} else {
+						h.HandleDive(tripID, diveXML.Number)
+					}
+				} else {
+					// </trip>
+					break
+				}
+			}
+		} else {
+			// </dives>
 			break
 		}
 	}
@@ -101,6 +142,12 @@ func DecodeSiteXML(decoder *Decoder, tok *xml.StartElement) (*SiteXML, error) {
 	siteXML := &SiteXML{}
 	err := decoder.XMLDecoder.DecodeElement(siteXML, tok)
 	return siteXML, err
+}
+
+func DecodeDiveXML(decoder *Decoder, tok *xml.StartElement) (*DiveXML, error) {
+	diveXML := &DiveXML{}
+	err := decoder.XMLDecoder.DecodeElement(diveXML, tok)
+	return diveXML, err
 }
 
 func (d *Decoder) Token() (tok xml.Token, err error) {
