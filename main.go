@@ -4,16 +4,19 @@ import (
 	"io/fs"
 	"net/http"
 
+	"src.acicovic.me/divelog/server"
 	"src.acicovic.me/divelog/webui"
 )
 
 func main() {
-	srv := &http.Server{
-		Addr:    ":8888",
-		Handler: router(),
-	}
+	// srv := &http.Server{
+	// 	Addr:    ":8888",
+	// 	Handler: router(),
+	// }
 
-	srv.ListenAndServe()
+	// srv.ListenAndServe()
+
+	server.Run()
 }
 
 func router() http.Handler {

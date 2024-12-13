@@ -38,7 +38,7 @@ type Decoder struct {
 
 type DiveDataHolder struct {
 	DiveNumber            int
-	TripID                int
+	DiveTripID            int
 	DiveSiteUUID          string
 	Rating                int
 	Visibility            int
@@ -118,6 +118,8 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 			if siteXML, err := DecodeSiteXML(decoder, startTag); err != nil {
 				return err
 			} else {
+				// DEVNOTE: this could have been parsed the same way the dive data was parsed
+				// it was left like this to demonstrate how powerful Go's XML parser can be
 				siteID := h.HandleDiveSite(siteXML.UUID, siteXML.Name, siteXML.GPS)
 				for _, geoData := range siteXML.Geos {
 					if cat, err := strconv.Atoi(geoData.Cat); err != nil {
@@ -136,9 +138,8 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 
 	// <dives>
 	if _, err = decoder.ExpectStart("dives"); err != nil {
-		// the database may contain no dive entries, or only dive entries,
-		// or combined trip and dive entries, but this decoder
-		// will report it as a format error
+		// the database may contain no dive entries, or only dive entries, or combined trip and dive entries,
+		// but this decoder will report it as a format error
 		return err
 	}
 
@@ -183,7 +184,7 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 func FlattenAndReport(diveXML *DiveXML, tripID int, h Handler) error {
 	var (
 		ddh = DiveDataHolder{
-			TripID:                tripID,
+			DiveTripID:            tripID,
 			DiveSiteUUID:          diveXML.DiveSiteUUID,
 			SAC:                   diveXML.SAC,
 			WaterSalinity:         diveXML.WaterSalinity,
