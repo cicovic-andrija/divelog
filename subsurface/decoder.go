@@ -6,6 +6,13 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"time"
+)
+
+// TODO: detailed errors (wrap ErrInvalidFormat)
+
+const (
+	IntNull = -1
 )
 
 var (
@@ -22,11 +29,44 @@ type Handler interface {
 	HandleDiveSite(uuid string, name string, coords string) int
 	HandleGeoData(siteID int, cat int, label string)
 	HandleDiveTrip(label string) int
-	HandleDive(tripID int, diveNum string) int
+	HandleDive(ddh DiveDataHolder) int
 }
 
 type Decoder struct {
 	XMLDecoder *xml.Decoder
+}
+
+type DiveDataHolder struct {
+	DiveNumber            int
+	TripID                int
+	DiveSiteUUID          string
+	Rating                int
+	Visibility            int
+	SAC                   string
+	Tags                  []string
+	WaterSalinity         string
+	DateTime              time.Time
+	Duration              string
+	DiveMasterOrOperator  string
+	Buddy                 string
+	Notes                 string
+	Suit                  string
+	CylinderSize          string
+	CylinderWorkPressure  string
+	CylinderDescription   string
+	CylinderStartPressure string
+	CylinderEndPressure   string
+	CylinderGas           string
+	Weight                string
+	WeightType            string
+	DiveComputerModel     string
+	DiveComputerDeviceID  string
+	DiveComputerDiveID    string
+	DepthMax              string
+	DepthMean             string
+	TemperatureWaterMin   string
+	TemperatureAir        string
+	SurfacePressure       string
 }
 
 func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
@@ -80,10 +120,10 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 			} else {
 				siteID := h.HandleDiveSite(siteXML.UUID, siteXML.Name, siteXML.GPS)
 				for _, geoData := range siteXML.Geos {
-					if cat, err := strconv.Atoi(geoData.Cat); err == nil {
-						h.HandleGeoData(siteID, cat, geoData.Value)
-					} else {
+					if cat, err := strconv.Atoi(geoData.Cat); err != nil {
 						return ErrInvalidFormat
+					} else {
+						h.HandleGeoData(siteID, cat, geoData.Value)
 					}
 				}
 			}
@@ -119,7 +159,9 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 					if diveXML, err := DecodeDiveXML(decoder, startTag); err != nil {
 						return err
 					} else {
-						h.HandleDive(tripID, diveXML.Number)
+						if err := FlattenAndReport(diveXML, tripID, h); err != nil {
+							return err
+						}
 					}
 				} else {
 					// </trip>
@@ -135,6 +177,94 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 	h.HandleEnd()
 	// </divelog>
 
+	return nil
+}
+
+func FlattenAndReport(diveXML *DiveXML, tripID int, h Handler) error {
+	var (
+		ddh = DiveDataHolder{
+			TripID:                tripID,
+			DiveSiteUUID:          diveXML.DiveSiteUUID,
+			SAC:                   diveXML.SAC,
+			WaterSalinity:         diveXML.WaterSalinity,
+			Duration:              diveXML.Duration,
+			DiveMasterOrOperator:  diveXML.DiveMaster,
+			Buddy:                 diveXML.Buddy,
+			Notes:                 diveXML.Notes,
+			Suit:                  diveXML.Suit,
+			CylinderSize:          diveXML.Cylinder.Size,
+			CylinderWorkPressure:  diveXML.Cylinder.WorkPressure,
+			CylinderDescription:   diveXML.Cylinder.Description,
+			CylinderStartPressure: diveXML.Cylinder.Start,
+			CylinderEndPressure:   diveXML.Cylinder.End,
+			Weight:                diveXML.WeightSystem.Weight,
+			WeightType:            diveXML.WeightSystem.Description,
+			DiveComputerModel:     diveXML.DiveComputer.Model,
+			DiveComputerDeviceID:  diveXML.DiveComputer.DeviceID,
+			DiveComputerDiveID:    diveXML.DiveComputer.DiveID,
+			DepthMax:              diveXML.DiveComputer.DepthInfo.Max,
+			DepthMean:             diveXML.DiveComputer.DepthInfo.Mean,
+			TemperatureAir:        diveXML.TemperatureManual.Air,
+			SurfacePressure:       diveXML.DiveComputer.SurfaceInfo.Pressure,
+		}
+		err error
+	)
+
+	if diveXML.Number == "" {
+		ddh.DiveNumber = IntNull
+	} else if ddh.DiveNumber, err = strconv.Atoi(diveXML.Number); err != nil {
+		return ErrInvalidFormat
+	}
+
+	if diveXML.Rating != "" {
+		if ddh.Rating, err = strconv.Atoi(diveXML.Rating); err != nil {
+			return ErrInvalidFormat
+		}
+	} else {
+		ddh.Rating = IntNull
+	}
+
+	if diveXML.Visibility != "" {
+		if ddh.Visibility, err = strconv.Atoi(diveXML.Visibility); err != nil {
+			return ErrInvalidFormat
+		}
+	} else {
+		ddh.Visibility = IntNull
+	}
+
+	tags := strings.Split(diveXML.Tags, ",")
+	for i, tag := range tags {
+		tags[i] = strings.TrimSpace(tag)
+	}
+	ddh.Tags = tags
+
+	// date format is yyyy-mm-dd
+	// time format is hh:mm:ss
+	if diveXML.Date == "" {
+		ddh.DateTime = time.Time{}
+	} else {
+		dateTimeStr := diveXML.Date + "T" + diveXML.Time + "Z"
+		if diveXML.Time == "" { // unlikely
+			dateTimeStr = diveXML.Date + "T00:00:00Z"
+		}
+		if ddh.DateTime, err = time.Parse(time.RFC3339, dateTimeStr); err != nil {
+			return ErrInvalidFormat
+		}
+	}
+
+	if diveXML.Cylinder.O2 == "" {
+		ddh.CylinderGas = "Air"
+	} else {
+		ddh.CylinderGas = "EANx " + diveXML.Cylinder.O2
+	}
+
+	if diveXML.DiveComputer.TemperatureInfo.WaterMin != "" {
+		ddh.TemperatureWaterMin = diveXML.DiveComputer.TemperatureInfo.WaterMin
+	} else {
+		ddh.TemperatureWaterMin = diveXML.TemperatureManual.Water
+	}
+
+	h.HandleDive(ddh)
 	return nil
 }
 
@@ -241,4 +371,8 @@ func FindAttribute(tok *xml.StartElement, name string) (val string, ok bool) {
 		}
 	}
 	return
+}
+
+func IsValidDateTime(t time.Time) bool {
+	return !t.IsZero()
 }
