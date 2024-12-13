@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"src.acicovic.me/divelog/subsurface"
 )
@@ -39,10 +40,31 @@ func (p *SubsurfaceCallbackHandler) HandleBegin() {
 
 func (p *SubsurfaceCallbackHandler) HandleDive(ddh subsurface.DiveDataHolder) int {
 	dive := &Dive{
-		ID:         p.lastDiveID + 1,
-		Number:     ddh.DiveNumber,
-		DiveSiteID: inmemDatabase.sourceToSystemID[ddh.DiveSiteUUID],
-		DiveTripID: ddh.DiveTripID,
+		ID:     p.lastDiveID + 1,
+		Number: ddh.DiveNumber,
+
+		Rating5:         ddh.Rating,
+		Visibility5:     ddh.Visibility,
+		Tags:            ddh.Tags,
+		Salinity:        ddh.WaterSalinity,
+		DateTimeIn:      ddh.DateTime.Format(time.RFC3339),
+		OperatorDM:      ddh.DiveMasterOrOperator,
+		Buddy:           ddh.Buddy,
+		Notes:           ddh.Notes,
+		Suit:            ddh.Suit,
+		CylSize:         ddh.CylinderSize,
+		CylType:         ddh.CylinderDescription,
+		StartPressure:   ddh.CylinderStartPressure,
+		EndPressure:     ddh.CylinderEndPressure,
+		Gas:             ddh.CylinderGas,
+		Weights:         ddh.Weight,
+		WeightsType:     ddh.WeightType,
+		DCModel:         ddh.DiveComputerModel,
+		DepthMax:        ddh.DepthMax,
+		DepthMean:       ddh.DepthMean,
+		TempWaterMin:    ddh.TemperatureWaterMin,
+		TempAir:         ddh.TemperatureAir,
+		SurfacePressure: ddh.SurfacePressure,
 
 		datetime: ddh.DateTime,
 	}
@@ -62,8 +84,11 @@ func (p *SubsurfaceCallbackHandler) HandleDive(ddh subsurface.DiveDataHolder) in
 	dive.DiveTripID = ddh.DiveTripID
 	fmt.Printf("link: %v -> %v\n", dive, inmemDatabase.DiveTrips[ddh.DiveTripID])
 
+	dive.Normalize()
+
 	inmemDatabase.Dives = append(inmemDatabase.Dives, dive)
 	p.lastDiveID++
+
 	return dive.ID
 }
 
@@ -82,6 +107,7 @@ func (p *SubsurfaceCallbackHandler) HandleDiveSite(uuid string, name string, coo
 
 	inmemDatabase.DiveSites = append(inmemDatabase.DiveSites, site)
 	p.lastSiteID++
+
 	return site.ID
 }
 
@@ -94,6 +120,7 @@ func (p *SubsurfaceCallbackHandler) HandleDiveTrip(label string) int {
 
 	inmemDatabase.DiveTrips = append(inmemDatabase.DiveTrips, trip)
 	p.lastTripID++
+
 	return trip.ID
 }
 

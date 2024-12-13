@@ -12,7 +12,7 @@ import (
 // TODO: detailed errors (wrap ErrInvalidFormat)
 
 const (
-	IntNull = -1
+	IntNull = 0
 )
 
 var (
@@ -198,6 +198,7 @@ func FlattenAndReport(diveXML *DiveXML, tripID int, h Handler) error {
 			CylinderDescription:   diveXML.Cylinder.Description,
 			CylinderStartPressure: diveXML.Cylinder.Start,
 			CylinderEndPressure:   diveXML.Cylinder.End,
+			CylinderGas:           diveXML.Cylinder.O2,
 			Weight:                diveXML.WeightSystem.Weight,
 			WeightType:            diveXML.WeightSystem.Description,
 			DiveComputerModel:     diveXML.DiveComputer.Model,
@@ -233,11 +234,11 @@ func FlattenAndReport(diveXML *DiveXML, tripID int, h Handler) error {
 		ddh.Visibility = IntNull
 	}
 
-	tags := strings.Split(diveXML.Tags, ",")
-	for i, tag := range tags {
-		tags[i] = strings.TrimSpace(tag)
+	for _, tag := range strings.Split(diveXML.Tags, ",") {
+		if trimmed := strings.TrimSpace(tag); trimmed != "" {
+			ddh.Tags = append(ddh.Tags, trimmed)
+		}
 	}
-	ddh.Tags = tags
 
 	// date format is yyyy-mm-dd
 	// time format is hh:mm:ss
@@ -251,12 +252,6 @@ func FlattenAndReport(diveXML *DiveXML, tripID int, h Handler) error {
 		if ddh.DateTime, err = time.Parse(time.RFC3339, dateTimeStr); err != nil {
 			return ErrInvalidFormat
 		}
-	}
-
-	if diveXML.Cylinder.O2 == "" {
-		ddh.CylinderGas = "Air"
-	} else {
-		ddh.CylinderGas = "EANx " + diveXML.Cylinder.O2
 	}
 
 	if diveXML.DiveComputer.TemperatureInfo.WaterMin != "" {
