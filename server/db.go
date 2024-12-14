@@ -8,20 +8,19 @@ import (
 	"src.acicovic.me/divelog/subsurface"
 )
 
-var inmemDatabase DiveLog
+var _inmemDatabase DiveLog
 
-func buildDatabase(sourceFullPath string) error {
-	file, err := os.Open(sourceFullPath)
+func buildDatabase() error {
+	file, err := os.Open(_inmemDatabase.Metadata.Source)
 	if err != nil {
-		return fmt.Errorf("failed to open file %s: %v", sourceFullPath, err)
+		return fmt.Errorf("failed to open file %s: %v", _inmemDatabase.Metadata.Source, err)
 	}
 	defer file.Close()
 
 	if err = subsurface.DecodeSubsurfaceDatabase(file, &SubsurfaceCallbackHandler{}); err != nil {
-		return fmt.Errorf("failed to decode database in %s: %v", sourceFullPath, err)
+		return fmt.Errorf("failed to decode database in %s: %v", _inmemDatabase.Metadata.Source, err)
 	}
 
-	inmemDatabase.Metadata.Source = sourceFullPath
 	return nil
 }
 
@@ -32,10 +31,10 @@ type SubsurfaceCallbackHandler struct {
 }
 
 func (p *SubsurfaceCallbackHandler) HandleBegin() {
-	inmemDatabase.DiveSites = make([]*DiveSite, 1, 100)
-	inmemDatabase.DiveTrips = make([]*DiveTrip, 1, 100)
-	inmemDatabase.Dives = make([]*Dive, 1, 100)
-	inmemDatabase.sourceToSystemID = make(map[string]int)
+	_inmemDatabase.DiveSites = make([]*DiveSite, 1, 100)
+	_inmemDatabase.DiveTrips = make([]*DiveTrip, 1, 100)
+	_inmemDatabase.Dives = make([]*Dive, 1, 100)
+	_inmemDatabase.sourceToSystemID = make(map[string]int)
 }
 
 func (p *SubsurfaceCallbackHandler) HandleDive(ddh subsurface.DiveDataHolder) int {
@@ -71,22 +70,22 @@ func (p *SubsurfaceCallbackHandler) HandleDive(ddh subsurface.DiveDataHolder) in
 	// TODO: assert dive number is not IntNull
 	fmt.Printf("build: %v\n", dive)
 
-	siteID, ok := inmemDatabase.sourceToSystemID[ddh.DiveSiteUUID]
+	siteID, ok := _inmemDatabase.sourceToSystemID[ddh.DiveSiteUUID]
 	if ok {
 		// TODO: assert site is not null
 		dive.DiveSiteID = siteID
-		fmt.Printf("link: %v -> %v\n", dive, inmemDatabase.DiveSites[siteID])
+		fmt.Printf("link: %v -> %v\n", dive, _inmemDatabase.DiveSites[siteID])
 	} else {
 		// TODO
 	}
 
 	// TODO: assert dive trip is not null
 	dive.DiveTripID = ddh.DiveTripID
-	fmt.Printf("link: %v -> %v\n", dive, inmemDatabase.DiveTrips[ddh.DiveTripID])
+	fmt.Printf("link: %v -> %v\n", dive, _inmemDatabase.DiveTrips[ddh.DiveTripID])
 
 	dive.Normalize()
 
-	inmemDatabase.Dives = append(inmemDatabase.Dives, dive)
+	_inmemDatabase.Dives = append(_inmemDatabase.Dives, dive)
 	p.lastDiveID++
 
 	return dive.ID
@@ -102,10 +101,10 @@ func (p *SubsurfaceCallbackHandler) HandleDiveSite(uuid string, name string, coo
 	}
 	fmt.Printf("build: %v\n", site)
 
-	inmemDatabase.sourceToSystemID[site.sourceID] = site.ID
+	_inmemDatabase.sourceToSystemID[site.sourceID] = site.ID
 	fmt.Printf("map: sourceToSystemID %q -> %d\n", site.sourceID, site.ID)
 
-	inmemDatabase.DiveSites = append(inmemDatabase.DiveSites, site)
+	_inmemDatabase.DiveSites = append(_inmemDatabase.DiveSites, site)
 	p.lastSiteID++
 
 	return site.ID
@@ -118,7 +117,7 @@ func (p *SubsurfaceCallbackHandler) HandleDiveTrip(label string) int {
 	}
 	fmt.Printf("build: %v\n", trip)
 
-	inmemDatabase.DiveTrips = append(inmemDatabase.DiveTrips, trip)
+	_inmemDatabase.DiveTrips = append(_inmemDatabase.DiveTrips, trip)
 	p.lastTripID++
 
 	return trip.ID
@@ -130,7 +129,7 @@ func (p *SubsurfaceCallbackHandler) HandleEnd() {
 
 func (p *SubsurfaceCallbackHandler) HandleGeoData(siteID int, cat int, label string) {
 	// TODO: assert site exists
-	site := inmemDatabase.DiveSites[siteID]
+	site := _inmemDatabase.DiveSites[siteID]
 	for _, lbl := range site.GeoLabels {
 		if lbl == label {
 			return
@@ -140,9 +139,9 @@ func (p *SubsurfaceCallbackHandler) HandleGeoData(siteID int, cat int, label str
 }
 
 func (p *SubsurfaceCallbackHandler) HandleHeader(program string, version string) {
-	inmemDatabase.Metadata.Program = program
-	inmemDatabase.Metadata.ProgramVersion = version
-	inmemDatabase.Metadata.Units = "metric" // DEVNOTE: make configurable?
+	_inmemDatabase.Metadata.Program = program
+	_inmemDatabase.Metadata.ProgramVersion = version
+	_inmemDatabase.Metadata.Units = "metric" // DEVNOTE: make configurable?
 }
 
 func (p *SubsurfaceCallbackHandler) HandleSkip(element string) {
