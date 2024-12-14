@@ -5,7 +5,9 @@ import (
 	"net/http"
 )
 
-func allDataHandler(w http.ResponseWriter, r *http.Request) {
+// Local API; registered only in "dev" mode; error reporting through HTTPS responses is acceptable.
+
+func fetchAll(w http.ResponseWriter, r *http.Request) {
 	all := &All{
 		DiveSites: _inmemDatabase.DiveSites,
 		DiveTrips: _inmemDatabase.DiveTrips,
@@ -16,6 +18,9 @@ func allDataHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(encoded)
+	writeJSON(w, encoded)
+}
+
+func forceFailure(w http.ResponseWriter, r *http.Request) {
+	assert(false, "forced failure")
 }

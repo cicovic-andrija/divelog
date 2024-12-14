@@ -32,13 +32,11 @@ func multiplexer(includeLocalAPI bool) http.Handler {
 	trace(_https, "handler registered for /static/")
 
 	if includeLocalAPI {
-		mux.HandleFunc("/data/0", allDataHandler)
+		mux.HandleFunc("/data/0", fetchAll)
 		trace(_https, "handler registered for /data/0")
 
-		mux.HandleFunc("/api/fail", func(w http.ResponseWriter, r *http.Request) {
-			assert(false, "forced failure")
-		})
-		trace(_https, "handler registered for /api/fail")
+		mux.HandleFunc("/action/fail", forceFailure)
+		trace(_https, "handler registered for /action/fail")
 	}
 
 	return mux
