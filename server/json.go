@@ -10,7 +10,15 @@ type All struct {
 	Dives     []*Dive     `json:"dives"`
 }
 
+type SiteHead struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 func writeJSON(w http.ResponseWriter, data []byte) {
 	w.Header().Set("Content-Type", "application/json")
+	if _serverControl.corsAllowAll {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	w.Write(data)
 }

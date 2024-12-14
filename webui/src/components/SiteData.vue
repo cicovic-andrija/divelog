@@ -14,17 +14,16 @@ const site = ref<DiveSite | undefined>()
 const resourceTitle = inject<ResourceTitle>('resourceTitle')
 
 onMounted(async () => {
-    console.log('mounted')
+    await store.fetchAll()
     site.value = await loadSite(props.siteId)
 })
 
 watch(() => props.siteId, async (newId) => {
-  console.log('changed')
   site.value = await loadSite(newId)
 })
 
 watch(site, (newValue) => {
-  resourceTitle?.setResourceTitle(newValue?.label)
+  resourceTitle?.setResourceTitle(newValue?.name)
 })
 
 async function loadSite(id: number | undefined): Promise<DiveSite | undefined> {
@@ -34,6 +33,6 @@ async function loadSite(id: number | undefined): Promise<DiveSite | undefined> {
 
 <template>
   <div v-if="!isPretty">
-    <json-block title="Details" :object="site" />
+    <json-block title="Dive Site" :object="site" />
   </div>
 </template>

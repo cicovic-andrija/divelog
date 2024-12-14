@@ -12,7 +12,7 @@ export interface DiveTripDesc {
 
 export interface DiveSiteDesc {
     id: number
-    label: string
+    name: string
 }
 
 export interface Dive {
@@ -24,7 +24,8 @@ export interface Dive {
 
 export interface DiveSite {
     id: number
-    label: string
+    name: string
+    coordinates: string
 }
 
 export interface StatusResponse {

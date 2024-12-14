@@ -14,7 +14,7 @@ const props = defineProps({
 
 const menuOptions = computed(() => store.siteDescriptors?.map(s => ({
   key: `o-s-${paddedID(s.id)}`,
-  label: () => h(RouterLink, { to: siteIdToRoute(s.id) }, { default: () => s.label }),
+  label: () => h(RouterLink, { to: siteIdToRoute(s.id) }, { default: () => s.name }),
 })))
 
 const selectedOption = computed(() => `o-s-${paddedID(props.siteId ?? 0)}`)

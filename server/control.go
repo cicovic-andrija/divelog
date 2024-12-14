@@ -24,6 +24,7 @@ type control struct {
 	endpoint         string
 	encryptedTraffic bool
 	localAPI         bool
+	corsAllowAll     bool
 }
 
 func (c *control) boot() {
@@ -35,7 +36,7 @@ func (c *control) boot() {
 func (c *control) init() {
 	c.https = &http.Server{
 		Addr:     c.endpoint,
-		Handler:  multiplexer(c.localAPI),
+		Handler:  multiplexer(),
 		ErrorLog: log.New(io.Discard, "", 0),
 	}
 

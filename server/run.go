@@ -25,6 +25,7 @@ func readEnvironment() {
 	trace(_env, "%s = %q", modeEnvVar, mode)
 	if mode == "dev" {
 		_serverControl.localAPI = true
+		_serverControl.corsAllowAll = true
 		_serverControl.encryptedTraffic = false
 		_serverControl.endpoint = "localhost:8072"
 	} else if mode == "" || mode == "prod" {
