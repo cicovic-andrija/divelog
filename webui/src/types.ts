@@ -1,18 +1,30 @@
+export interface DiveSiteDesc {
+    id: number
+    name: string
+}
+
+export interface DiveSite {
+    id: number
+    name: string
+    coordinates: string
+    geo_labels: string[]
+    linked_dives: {
+        id: number
+        short_label: string
+        date_time: string
+    }
+}
+
 export interface DiveDesc {
     id: number
-    label: string
-    cardinal: number
+    short_label: string
+    date_time: string
 }
 
 export interface DiveTripDesc {
     id: number
     label: string
-    descriptors: DiveDesc[]
-}
-
-export interface DiveSiteDesc {
-    id: number
-    name: string
+    linked_dives: DiveDesc[]
 }
 
 export interface Dive {
@@ -20,12 +32,6 @@ export interface Dive {
     label: string
     cardinal: number
     max_depth: string
-}
-
-export interface DiveSite {
-    id: number
-    name: string
-    coordinates: string
 }
 
 export interface StatusResponse {

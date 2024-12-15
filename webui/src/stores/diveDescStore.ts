@@ -8,11 +8,10 @@ export const useDiveDescStore = defineStore('diveDescriptors', () => {
   async function fetchAll(): Promise<StatusResponse> {
     if (diveDescriptors.value === undefined) {
       try {
-        const resp = await fetch('https://my-json-server.typicode.com/cicovic-andrija/jsonmock/trips')
+        const resp = await fetch('http://localhost:8072/data/trips')
         const body = resp.ok ? await resp.json() : undefined
         if (body) {
           diveDescriptors.value = body
-          diveDescriptors.value?.sort((a, b) => a.id - b.id)
         }
         return {
           ok: diveDescriptors.value !== undefined,

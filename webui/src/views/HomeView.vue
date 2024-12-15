@@ -12,15 +12,15 @@ const themeName: string = inject('themeName', 'light' /* default */)
       <n-h1 class="banner-title">
         <span>MyDives</span>
       </n-h1>
-      <n-p style="font-size: 16px; margin-top: 0; margin-bottom: 0;">
-        My personal dive log.
+      <n-p style="font-size: 16px; font-weight: 500; margin-top: 0; margin-bottom: 0;">
+        Personal SCUBA rec dive log
       </n-p>
-      <n-p style="font-size: 16px; font-weight: 500; margin-top: 4px; margin-bottom: 16px;">
+      <n-p style="font-size: 16px; margin-top: 4px; margin-bottom: 16px;">
         Powered by
-          <a href="https://go.dev/" target="_blank">Go</a>,
-          <a href="https://vuejs.org/" target="_blank">Vue 3</a>,
-          <a href="https://www.naiveui.com/" target="_blank">NaiveUI</a> and
-          <a href="https://subsurface-divelog.org/" target="_blank">Subsurface</a>.
+          <a href="https://go.dev/" target="_blank">Go <small><sup>🗗</sup></small></a>,
+          <a href="https://vuejs.org/" target="_blank">Vue 3 <small><sup>🗗</sup></small></a>,
+          <a href="https://www.naiveui.com/" target="_blank">NaiveUI <small><sup>🗗</sup></small></a> and
+          <a href="https://subsurface-divelog.org/" target="_blank">Subsurface <small><sup>🗗</sup></small></a>
       </n-p>
       <n-button
         type="primary"
@@ -33,7 +33,7 @@ const themeName: string = inject('themeName', 'light' /* default */)
     <n-layout-footer bordered>
       <div class="footer-content">
         <n-p>
-          Made by Andrija Cicović - 2025
+          🐬 Made by Andrija Cicović | 2024/2025 🐬
         </n-p>
       </div>
     </n-layout-footer>

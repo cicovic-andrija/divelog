@@ -3,7 +3,7 @@ import { ref, computed, provide } from 'vue'
 import {RouterView } from 'vue-router'
 import { NConfigProvider, NGlobalStyle, darkTheme, lightTheme } from 'naive-ui'
 import { saveStringToLocalStorage, loadStringFromLocalStorage } from '@/utils'
-import SiteHeader from '@/components/SiteHeader.vue'
+import DocumentHeader from '@/components/DocumentHeader.vue'
 
 const themeName = ref(savedThemeNameOrDefault())
 provide('themeName', themeName)
@@ -32,7 +32,7 @@ function saveThemeName(themeName: string): void {
 
 <template>
   <n-config-provider :theme="theme">
-    <site-header :themeName="themeName" @themeChangeRequested="changeTheme()"/>
+    <document-header :themeName="themeName" @themeChangeRequested="changeTheme()"/>
     <router-view />
     <n-global-style />
   </n-config-provider>

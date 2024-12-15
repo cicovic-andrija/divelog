@@ -3,7 +3,7 @@ import { onMounted, ref, computed, h } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { NMenu } from 'naive-ui'
 import { useDiveDescStore } from '@/stores/diveDescStore'
-import { paddedID, diveIdToRoute, diveDescToLabel } from '@/utils'
+import { paddedID, diveIdToRoute } from '@/utils'
 import GhostMenu from './GhostMenu.vue'
 const router = useRouter()
 const store = useDiveDescStore()
@@ -16,12 +16,12 @@ const menuOptions = computed(() => store.diveDescriptors?.map(t => ({
   key: `o-t-${paddedID(t.id)}`,
   type: 'group',
   label: `${t.label}`,
-  children: t.descriptors.map(d => ({
+  children: t.linked_dives.map(d => ({
     key: `o-d-${paddedID(d.id)}`,
     label: () => h(
       RouterLink,
       { to: diveIdToRoute(d.id) },
-      { default: () => diveDescToLabel(d) }
+      { default: () => d.short_label }
     ),
   })),
 })))

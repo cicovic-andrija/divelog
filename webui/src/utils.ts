@@ -1,4 +1,4 @@
-import type { Dive, DiveDesc } from "@/types"
+import type { Dive } from "@/types"
 
 export function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -26,10 +26,6 @@ export function siteIdToRoute(id: number): string {
 
 export function paddedID(id: number): string {
     return id.toString().padStart(4, '0')
-}
-
-export function diveDescToLabel(desc: DiveDesc): string {
-    return `${desc.cardinal}. ${desc.label}`
 }
 
 export function composeDiveTitle(dive: Dive): string {
