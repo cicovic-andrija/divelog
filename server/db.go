@@ -125,6 +125,8 @@ func (p *SubsurfaceCallbackHandler) HandleDiveTrip(label string) int {
 
 func (p *SubsurfaceCallbackHandler) HandleEnd() {
 	// TODO: assert len(slice) == lastID
+	// TODO: dives should be ordered by datetime
+	// TODO: trips should be partitioned correctly
 }
 
 func (p *SubsurfaceCallbackHandler) HandleGeoData(siteID int, cat int, label string) {

@@ -18,9 +18,14 @@ func fetchAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	writeJSON(w, encoded)
+	send(w, encoded)
 }
 
 func forceFailure(w http.ResponseWriter, r *http.Request) {
 	assert(false, "forced failure")
+}
+
+func rebuildDatabase(w http.ResponseWriter, r *http.Request) {
+	// TODO: implement
+	w.WriteHeader(http.StatusNotImplemented)
 }

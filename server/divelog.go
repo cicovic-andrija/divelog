@@ -72,6 +72,10 @@ func (s *DiveSite) String() string {
 	return fmt.Sprintf("S%d:[%s]", s.ID, s.Name)
 }
 
+func (s *DiveSite) ShortName() string {
+	return strings.TrimSpace(strings.Split(s.Name, ",")[0])
+}
+
 func (t *DiveTrip) String() string {
 	return fmt.Sprintf("T%d:[%s]", t.ID, t.Label)
 }
@@ -82,24 +86,36 @@ func (d *Dive) String() string {
 
 func (d *Dive) Normalize() {
 	if strings.HasPrefix(d.Salinity, "1000") {
-		d.Salinity = "Fresh water"
+		d.Salinity = "fresh water"
 	} else if strings.HasPrefix(d.Salinity, "1030") {
-		d.Salinity = "Salt water"
+		d.Salinity = "salt water"
 	} else {
 		d.Salinity = ""
 	}
 
 	if d.Gas == "" {
-		d.Gas = "Air"
+		d.Gas = "air"
 	} else { // e.g. "32%"
-		d.Gas = "EANx " + d.Gas
+		d.Gas = "nitrox " + d.Gas
 	}
 
 	d.CylType = cylTypeMappings[d.CylType]
 }
 
+func (d *Dive) IsTaggedWith(tag string) bool {
+	if tag == "" {
+		return true
+	}
+	for _, t := range d.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
 var cylTypeMappings = map[string]string{
-	"AL100": "Aluminium",
-	"HP100": "Steel",
-	"HP130": "Steel",
+	"AL100": "aluminium",
+	"HP100": "steel",
+	"HP130": "steel",
 }
