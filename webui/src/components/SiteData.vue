@@ -14,8 +14,7 @@ const site = ref<DiveSite | undefined>()
 const resourceTitle = inject<ResourceTitle>('resourceTitle')
 
 onMounted(async () => {
-    await store.fetchAll()
-    site.value = await loadSite(props.siteId)
+  site.value = await loadSite(props.siteId)
 })
 
 watch(() => props.siteId, async (newId) => {
@@ -27,7 +26,11 @@ watch(site, (newValue) => {
 })
 
 async function loadSite(id: number | undefined): Promise<DiveSite | undefined> {
-  return (id === undefined) ? undefined : await store.find(id)
+  if (id === undefined) {
+    return undefined
+  }
+  await store.fetchSite(id)
+  return store.sites.get(id)
 }
 </script>
 

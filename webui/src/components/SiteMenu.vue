@@ -20,7 +20,6 @@ const menuOptions = computed(() => store.siteDescriptors?.map(s => ({
 const selectedOption = computed(() => `o-s-${paddedID(props.siteId ?? 0)}`)
 
 onMounted(async () => {
-  // devtest: sleep
   await store.fetchAll()
   loaded.value = store.siteDescriptors !== undefined
   if (props.siteId == 0) {

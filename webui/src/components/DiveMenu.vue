@@ -29,7 +29,6 @@ const menuOptions = computed(() => store.diveDescriptors?.map(t => ({
 const selectedOption = computed(() => `o-d-${paddedID(props.diveId ?? 0)}`)
 
 onMounted(async () => {
-  // devtest: sleep
   await store.fetchAll()
   loaded.value = store.diveDescriptors !== undefined
   if (props.diveId == 0) {

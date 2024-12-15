@@ -28,7 +28,11 @@ watch(dive, (newValue) => {
 })
 
 async function loadDive(id: number | undefined): Promise<Dive | undefined> {
-  return (id === undefined) ? undefined : await store.find(id)
+  if (id === undefined) {
+    return undefined
+  }
+  await store.fetchDive(id)
+  return store.dives.get(id)
 }
 </script>
 

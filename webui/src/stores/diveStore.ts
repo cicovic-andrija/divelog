@@ -1,32 +1,43 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { type Dive } from '@/types'
+import { type Dive, type StatusResponse } from '@/types'
 
 export const useDiveStore = defineStore('dives', () => {
-    const dives = ref<Map<number, Dive>>(new Map<number, Dive>([
-        [1, {
-            id: 1,
-            label: 'Um El Faroud',
-            cardinal: 1,
-            max_depth: '33 m'
-        }],
-        [2, {
-            id: 2,
-            label: 'Tugboat Rozi',
-            cardinal: 2,
-            max_depth: '31 m'
-        }],
-        [3, {
-            id: 3,
-            label: 'Zenobia',
-            cardinal: 3,
-            max_depth: '16 m'
-        }]
-    ]))
+    const dives = ref<Map<number, Dive>>(new Map<number, Dive>())
 
-    async function find(id: number) {
-        return dives.value.get(id)
+    async function fetchDive(id:number): Promise<StatusResponse> {
+        if (dives.value.has(id)) {
+            return {
+                ok: true,
+                status: 200,
+                error: null
+            }
+        }
+        try {
+            const resp = await fetch(`http://localhost:8072/data/dives/${id}`)
+            const body = resp.ok ? await resp.json() : undefined
+            if (body) {
+                dives.value.set(body.id, body)
+                return {
+                    ok: true,
+                    status: 200,
+                    error: null
+                }
+            }
+            return {
+                ok: false,
+                status: resp.status,
+                error: null
+            }
+        } catch (e) {
+            return {
+                ok: false,
+                status: 0,
+                error: e
+            }
+        }
+
     }
 
-    return { dives, find }
+    return { dives, fetchDive }
 })
