@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/fs"
 	"net/http"
+	"slices"
 	"sort"
 	"strconv"
 
@@ -74,7 +75,8 @@ func fetchSite(w http.ResponseWriter, r *http.Request) {
 
 func fetchTrips(w http.ResponseWriter, r *http.Request) {
 	trips := make([]*Trip, 0, len(_inmemDatabase.DiveTrips))
-	if r.URL.Query().Get("reverse") == "true" {
+	reverse := r.URL.Query().Get("reverse") == "true"
+	if reverse {
 		for _, trip := range _inmemDatabase.DiveTrips[1:] {
 			trips = append(trips, &Trip{
 				ID:    trip.ID,
@@ -96,6 +98,9 @@ func fetchTrips(w http.ResponseWriter, r *http.Request) {
 				// TODO: assert _inmemDatabase.DiveSites[dive.DiveSiteID]
 				trip.LinkedDives = append(trip.LinkedDives, NewDiveHead(dive, _inmemDatabase.DiveSites[dive.DiveSiteID]))
 			}
+		}
+		if !reverse {
+			slices.Reverse(trip.LinkedDives)
 		}
 	}
 
