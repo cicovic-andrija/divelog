@@ -2,6 +2,8 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
+	"html/template"
 	"io/fs"
 	"net/http"
 	"slices"
@@ -154,7 +156,6 @@ func fetchDive(w http.ResponseWriter, r *http.Request) {
 	diveID, _ := strconv.Atoi(id)
 	dive := _inmemDatabase.Dives[diveID]
 
-	// TODO: assert _inmemDatabase.DiveSites[dive.DiveSiteID]
 	resp, err := json.Marshal(NewDiveFull(dive, _inmemDatabase.DiveSites[dive.DiveSiteID]))
 	if err != nil {
 		trace(_error, "http: failed to marshal single dive data: %v", err)
@@ -183,8 +184,164 @@ func fetchTags(w http.ResponseWriter, r *http.Request) {
 	send(w, resp)
 }
 
+func renderDives(w http.ResponseWriter, r *http.Request) {
+	// TODO: handle error
+	template, _ := template.ParseFiles("data/pagetemplate.html")
+	page := Page{Title: "All dives"}
+
+	trips := make([]*Trip, 0, len(_inmemDatabase.DiveTrips))
+	for i := len(_inmemDatabase.DiveTrips) - 1; i > 0; i-- {
+		trip := &Trip{
+			ID:    i,
+			Label: _inmemDatabase.DiveTrips[i].Label,
+		}
+		for i := len(_inmemDatabase.Dives) - 1; i > 0; i-- {
+			dive := _inmemDatabase.Dives[i]
+			if dive.DiveTripID == trip.ID {
+				trip.LinkedDives = append(
+					trip.LinkedDives,
+					NewDiveHead(dive, _inmemDatabase.DiveSites[dive.DiveSiteID]),
+				)
+			}
+		}
+		trips = append(trips, trip)
+	}
+	page.Trips = trips
+
+	// TODO: handle error
+	template.Execute(w, page)
+}
+
+func renderSites(w http.ResponseWriter, r *http.Request) {
+	// TODO: handle error
+	template, _ := template.ParseFiles("data/pagetemplate.html")
+	page := Page{Title: "All dive sites"}
+
+	heads := make([]*SiteHead, 0, len(_inmemDatabase.DiveSites))
+	for _, site := range _inmemDatabase.DiveSites[1:] {
+		heads = append(heads, &SiteHead{
+			ID:   site.ID,
+			Name: site.Name,
+		})
+	}
+	sort.Slice(heads, func(i, j int) bool {
+		return heads[i].Name < heads[j].Name
+	})
+	page.Sites = heads
+
+	// TODO: handle error
+	template.Execute(w, page)
+}
+
+func renderDive(w http.ResponseWriter, r *http.Request) {
+	// TODO: handle error
+	template, _ := template.ParseFiles("data/pagetemplate.html")
+
+	// TODO: validate ID
+	id := r.PathValue("id")
+	diveID, _ := strconv.Atoi(id)
+	dive := _inmemDatabase.Dives[diveID]
+	site := _inmemDatabase.DiveSites[dive.DiveSiteID]
+	page := Page{
+		Title: fmt.Sprintf("Dive %d: %s", dive.Number, site.Name),
+		Dive:  NewDiveFull(dive, site),
+	}
+
+	// TODO: handle error
+	template.Execute(w, page)
+}
+
+func renderSite(w http.ResponseWriter, r *http.Request) {
+	// TODO: handle error
+	template, _ := template.ParseFiles("data/pagetemplate.html")
+
+	// TODO: validate ID
+	id := r.PathValue("id")
+	siteID, _ := strconv.Atoi(id)
+	site := _inmemDatabase.DiveSites[siteID]
+	page := Page{
+		Title: site.Name,
+		Site:  NewSiteFull(site, _inmemDatabase.Dives[1:]),
+	}
+
+	// TODO: handle error
+	template.Execute(w, page)
+}
+
+func renderTags(w http.ResponseWriter, r *http.Request) {
+	// TODO: handle error
+	template, _ := template.ParseFiles("data/pagetemplate.html")
+
+	tags := make(map[string]int)
+	for _, dive := range _inmemDatabase.Dives[1:] {
+		for _, tag := range dive.Tags {
+			tags[tag]++
+		}
+	}
+
+	page := Page{
+		Title: "All tags",
+		Tags:  tags,
+	}
+
+	// TODO: handle error
+	template.Execute(w, page)
+}
+
+func renderTaggedDives(w http.ResponseWriter, r *http.Request) {
+	// TODO: handle error
+	template, _ := template.ParseFiles("data/pagetemplate.html")
+
+	// TODO: tag==""?
+	tag := r.PathValue("tag")
+	dives := []*DiveHead{}
+	for i := len(_inmemDatabase.Dives) - 1; i > 0; i-- {
+		dive := _inmemDatabase.Dives[i]
+		for _, t := range dive.Tags {
+			if t == tag {
+				dives = append(
+					dives,
+					NewDiveHead(dive, _inmemDatabase.DiveSites[dive.DiveSiteID]),
+				)
+			}
+		}
+	}
+
+	page := Page{
+		Title: fmt.Sprintf("Dives tagged with %q", tag),
+		Dives: dives,
+	}
+
+	// TODO: handle error
+	template.Execute(w, page)
+}
+
 func multiplexer() http.Handler {
 	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /hms/dives", renderDives)
+	trace(_https, "handler registered for /hms/dives")
+	// TODO: Check what /hms/dives/{$} returns
+
+	mux.HandleFunc("GET /hms/sites", renderSites)
+	trace(_https, "handler registered for /hms/sites")
+	// TODO: Check what /hms/sites/{$} returns
+
+	mux.HandleFunc("GET /hms/tags", renderTags)
+	trace(_https, "handler registered for /hms/tags")
+	// TODO: Check what /hms/tags/{$} returns
+
+	mux.HandleFunc("GET /hms/dives/{id}", renderDive)
+	trace(_https, "handler registered for /hms/dives/{id}")
+	// TODO: ditto
+
+	mux.HandleFunc("GET /hms/sites/{id}", renderSite)
+	trace(_https, "handler registered for /hms/sites/{id}")
+	// TODO: ditto
+
+	mux.HandleFunc("GET /hms/tags/{tag}", renderTaggedDives)
+	trace(_https, "handler registered for /hms/tags/{tag}")
+	// TODO: ditto
 
 	// data handlers
 	mux.HandleFunc("GET /data/", func(w http.ResponseWriter, r *http.Request) {

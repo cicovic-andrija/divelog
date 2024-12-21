@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        body {
+            margin: 2vh auto;
+            max-width: 650px;
+            line-height: 1.6;
+            font-size: 18px;
+            font-family: "Lato", "Arial", "Helvetica", sans-serif;
+            color:#444;
+            padding: 0 10px;
+        }
+        hr {
+            color: #eee;
+        }
+        h1, h2, h3 {
+            line-height: 1.2;
+        }
+        h1 {
+            margin: 0;
+            margin-bottom: 4px;
+        }
+        a {
+            text-decoration: none;
+        }
+        .styled-link {
+            display: inline-block;
+            padding: 1px 10px;
+            margin: 0;
+            font-size: small;
+            font-weight: bold;
+            background-color: green;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+    </style>
+    <title>MyDives</title>
+</head>
+<body>
+    <!-- Header -->
+    <hr>
+    <div class="nav-links">
+        <a href="/hms/dives" class="link">Dives</a> ⋅
+        <a href="/hms/sites" class="link">Sites</a> ⋅
+        <a href="/hms/tags" class="link">Tags</a> ⋅
+        <a href="https://github.com/cicovic-andrija" target="_blank" class="link">GitHub</a>
+    </div>
+    <hr>
+
+    <h1>{{ .Title }}</h1>
+
+    <!-- case 1 -->
+    {{ if .Trips }}
+    {{ range .Trips }}
+    <h3>{{ .Label }}</h3>
+    {{ range .LinkedDives }}
+    <a href="/hms/dives/{{ .ID }}">{{ .ShortLabel }}</a><br>
+    {{ end }}
+    {{ end }}
+    {{ end }}
+
+    <!-- case 2 -->
+    {{ if .Dives }}
+    <p></p>
+   {{ range .Dives }}
+    <a href="/hms/dives/{{ .ID }}">{{ .ShortLabel }}</a><br>
+    {{ end }}
+    {{ end }}
+
+    <!-- case 3 -->
+    {{ if .Sites }}
+    {{ range .Sites }}
+    <a href="/hms/sites/{{ .ID }}">⮞ {{ .Name }}</a><br>
+    {{ end }}
+    {{ end }}
+
+    <!-- case 4 -->
+    {{ if .Dive }}
+    {{ range .Dive.Tags }}
+    <a class="styled-link" href="/hms/tags/{{ . }}">{{ . }}</a>
+    {{ end }}
+    <table style="margin-top: 32px;">
+        <tr>
+            <td><b>Start time</b></td>
+            <td>{{ .Dive.DateTimeInPretty }}</td>
+        </tr>
+        <tr>
+            <td><b>Dive site</b></td>
+            <td><a href="/hms/sites/{{ .Dive.DiveSiteID }}">{{ .Dive.DiveSiteName }}</a></td>
+        </tr>
+        <tr>
+            <td><b>Rating</b></td>
+            <td>{{ .Dive.Rating5 }}/5</td>
+        </tr>
+        <tr>
+            <td><b>Visibility</b></td>
+            <td>{{ .Dive.Visibility5 }}/5</td>
+        </tr>
+        <tr>
+            <td><b>Water</b></td>
+            <td>{{ .Dive.Salinity }}</td>
+        </tr>
+        <tr>
+            <td><b>Surface pressure</b></td>
+            <td>{{ .Dive.SurfacePressure }}</td>
+        </tr>
+        <tr>
+            <td><b>Max. depth</b></td>
+            <td>{{ .Dive.DepthMax }}</td>
+        </tr>
+        <tr>
+            <td><b>Mean depth</b></td>
+            <td>{{ .Dive.DepthMean }}</td>
+        </tr>
+        <tr>
+            <td><b>Min. water temp.</b></td>
+            <td>{{ .Dive.TempWaterMin }}</td>
+        </tr>
+        <tr>
+            <td><b>Air temp.</b></td>
+            <td>{{ .Dive.TempAir }}</td>
+        </tr>
+        <tr>
+            <td><b>Operator / DM</b></td>
+            <td>{{ .Dive.OperatorDM }}</td>
+        </tr>
+        <tr>
+            <td><b>Buddy</b></td>
+            <td>{{ .Dive.Buddy }}</td>
+        </tr>
+        <tr>
+            <td><b>Suit</b></td>
+            <td>{{ .Dive.Suit }}</td>
+        </tr>
+        <tr>
+            <td><b>Cylinder type</b></td>
+            <td>{{ .Dive.CylType }}</td>
+        </tr>
+        <tr>
+            <td><b>Cylinder size</b></td>
+            <td>{{ .Dive.CylSize }}</td>
+        </tr>
+        <tr>
+            <td><b>Start pressure</b></td>
+            <td>{{ .Dive.StartPressure }}</td>
+        </tr>
+        <tr>
+            <td><b>End pressure</b></td>
+            <td>{{ .Dive.EndPressure }}</td>
+        </tr>
+        <tr>
+            <td><b>Gas</b></td>
+            <td>{{ .Dive.Gas }}</td>
+        </tr>
+        <tr>
+            <td><b>Weights</b></td>
+            <td>{{ .Dive.Weights }}</td>
+        </tr>
+        <tr>
+            <td><b>Weight type</b></td>
+            <td>{{ .Dive.WeightsType }}</td>
+        </tr>
+        <tr>
+            <td><b>Notes</b></td>
+            <td>{{ .Dive.Notes }}</td>
+        </tr>
+        <tr>
+            <td><b>Dive computer</b></td>
+            <td>{{ .Dive.DCModel }}</td>
+        </tr>
+    </table>
+    {{ end}}
+
+    <!-- case 5 -->
+    {{ if .Site }}
+    {{ range .Site.GeoLabels }}
+    {{ . }},<br>
+    {{ end }}
+    <strong>{{ .Site.Coordinates }}</strong><br>
+    <h3>Dives on this site</h3>
+    {{ range .Site.LinkedDives }}
+    <a href="/hms/dives/{{ .ID }}">⮞ {{ .DateTimeInPretty }}</a><br>
+    {{ end }}
+    {{ end}}
+
+    <!-- case 6 -->
+    {{ if .Tags }}
+    <p></p>
+    {{ range $key, $value := .Tags}}
+    <a href="/hms/tags/{{ $key }}">{{ $key }}</a> ({{ $value }})<br>
+    {{ end }}
+    {{ end }}
+</body>
+</html>
