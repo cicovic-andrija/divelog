@@ -41,7 +41,7 @@ type Trip struct {
 func NewDiveHead(dive *Dive, diveSite *DiveSite) *DiveHead {
 	return &DiveHead{
 		ID:               dive.ID,
-		ShortLabel:       fmt.Sprintf("No. %d ⮞ %s", dive.Number, diveSite.ShortName()),
+		ShortLabel:       fmt.Sprintf("Dive %d: %s", dive.Number, diveSite.ShortName()),
 		DateTimeInPretty: dive.datetime.Format("January 2 2006, 15:04"),
 	}
 }
@@ -65,11 +65,12 @@ func NewSiteFull(site *DiveSite, allDives []*Dive) *SiteFull {
 }
 
 type Page struct {
-	Title string
-	Trips []*Trip
-	Sites []*SiteHead
-	Dives []*DiveHead
-	Tags  map[string]int
-	Dive  *DiveFull
-	Site  *SiteFull
+	Title      string
+	Supertitle string
+	Trips      []*Trip
+	Sites      []*SiteHead
+	Dives      []*DiveHead
+	Tags       map[string]int
+	Dive       *DiveFull
+	Site       *SiteFull
 }

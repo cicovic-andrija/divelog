@@ -187,7 +187,10 @@ func fetchTags(w http.ResponseWriter, r *http.Request) {
 func renderDives(w http.ResponseWriter, r *http.Request) {
 	// TODO: handle error
 	template, _ := template.ParseFiles("data/pagetemplate.html")
-	page := Page{Title: "All dives"}
+	page := Page{
+		Title:      "Dives",
+		Supertitle: "All",
+	}
 
 	trips := make([]*Trip, 0, len(_inmemDatabase.DiveTrips))
 	for i := len(_inmemDatabase.DiveTrips) - 1; i > 0; i-- {
@@ -215,7 +218,10 @@ func renderDives(w http.ResponseWriter, r *http.Request) {
 func renderSites(w http.ResponseWriter, r *http.Request) {
 	// TODO: handle error
 	template, _ := template.ParseFiles("data/pagetemplate.html")
-	page := Page{Title: "All dive sites"}
+	page := Page{
+		Title:      "Dive sites",
+		Supertitle: "All",
+	}
 
 	heads := make([]*SiteHead, 0, len(_inmemDatabase.DiveSites))
 	for _, site := range _inmemDatabase.DiveSites[1:] {
@@ -243,8 +249,9 @@ func renderDive(w http.ResponseWriter, r *http.Request) {
 	dive := _inmemDatabase.Dives[diveID]
 	site := _inmemDatabase.DiveSites[dive.DiveSiteID]
 	page := Page{
-		Title: fmt.Sprintf("Dive %d: %s", dive.Number, site.Name),
-		Dive:  NewDiveFull(dive, site),
+		Title:      site.Name,
+		Supertitle: fmt.Sprintf("Dive %d", dive.Number),
+		Dive:       NewDiveFull(dive, site),
 	}
 
 	// TODO: handle error
@@ -260,8 +267,9 @@ func renderSite(w http.ResponseWriter, r *http.Request) {
 	siteID, _ := strconv.Atoi(id)
 	site := _inmemDatabase.DiveSites[siteID]
 	page := Page{
-		Title: site.Name,
-		Site:  NewSiteFull(site, _inmemDatabase.Dives[1:]),
+		Title:      site.Name,
+		Supertitle: site.Coordinates,
+		Site:       NewSiteFull(site, _inmemDatabase.Dives[1:]),
 	}
 
 	// TODO: handle error
@@ -280,8 +288,9 @@ func renderTags(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := Page{
-		Title: "All tags",
-		Tags:  tags,
+		Title:      "Tags",
+		Supertitle: "All",
+		Tags:       tags,
 	}
 
 	// TODO: handle error
@@ -308,8 +317,9 @@ func renderTaggedDives(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := Page{
-		Title: fmt.Sprintf("Dives tagged with %q", tag),
-		Dives: dives,
+		Title:      tag,
+		Supertitle: "Dives tagged with",
+		Dives:      dives,
 	}
 
 	// TODO: handle error

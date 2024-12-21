@@ -15,7 +15,10 @@
             padding: 0 10px;
         }
         hr {
-            color: #eee;
+            color: #ccc;
+        }
+        footer {
+            margin-top: 32px;
         }
         h1, h2, h3 {
             line-height: 1.2;
@@ -25,10 +28,23 @@
             margin-bottom: 4px;
             color: #2C3E50;
         }
+        h4 {
+            margin: 0;
+            color: #2C3E50;
+        }
         a {
             font-weight: bold;
             color: #2C3E50;
             text-decoration: none;
+        }
+        table {
+            border-collapse: collapse;
+            border-left: 2px solid #ccc;
+        }
+        table td {
+            border-left: none;
+            padding-left: 8px;
+            padding-bottom: 4px;
         }
         a:hover {
             color: #E74C3C;
@@ -39,6 +55,16 @@
         }
         .nav-link:hover {
             color: #2C3E50;
+        }
+        .tag {
+            display: inline-block;
+            padding: 1px 10px;
+            margin: 0;
+            font-size: small;
+            font-weight: bold;
+            background-color: #E74C3C;
+            color: white;
+            border-radius: 4px;
         }
         .tag-link {
             display: inline-block;
@@ -60,19 +86,20 @@
 <body>
     <!-- Header -->
     <div class="nav-links">
-        <a href="/hms/dives" class="nav-link">Dives</a> |
-        <a href="/hms/sites" class="nav-link">Sites</a> |
-        <a href="/hms/tags" class="nav-link">Tags</a> |
+        <a href="/hms/dives" class="nav-link">Dives</a> │
+        <a href="/hms/sites" class="nav-link">Sites</a> │
+        <a href="/hms/tags" class="nav-link">Tags</a> │
         <a href="https://github.com/cicovic-andrija" target="_blank" class="nav-link">GitHub</a>
     </div>
     <hr>
 
+    {{ if .Supertitle }}<h4>{{ .Supertitle }}</h4>{{ end }}
     <h1>{{ .Title }}</h1>
 
     <!-- case 1 -->
     {{ if .Trips }}
     {{ range .Trips }}
-    <h3>{{ .Label }}</h3>
+    <h3><i>{{ .Label }}</i></h3>
     {{ range .LinkedDives }}
     <a href="/hms/dives/{{ .ID }}">{{ .ShortLabel }}</a><br>
     {{ end }}
@@ -91,7 +118,7 @@
     {{ if .Sites }}
     <p></p>
     {{ range .Sites }}
-    <a href="/hms/sites/{{ .ID }}">⮞ {{ .Name }}</a><br>
+    <a href="/hms/sites/{{ .ID }}">{{ .Name }}</a><br>
     {{ end }}
     {{ end }}
 
@@ -190,27 +217,31 @@
             <td>{{ .Dive.DCModel }}</td>
         </tr>
     </table>
+    <p><a href="/hms/dives">[Previous]</a>   <a href="/hms/dives">[Next]</a></p>
     {{ end}}
 
     <!-- case 5 -->
     {{ if .Site }}
-    <h3>Geographic Information</h3>
     {{ range .Site.GeoLabels }}
-    {{ . }},<br>
+    <span class="tag">{{ . }}</span>
     {{ end }}
-    <strong>{{ .Site.Coordinates }}</strong><br>
-    <h3>Dives on this site</h3>
+    <h3>Dives</h3>
     {{ range .Site.LinkedDives }}
-    <a href="/hms/dives/{{ .ID }}">⮞ {{ .DateTimeInPretty }}</a><br>
+    <a href="/hms/dives/{{ .ID }}">{{ .DateTimeInPretty }}</a><br>
     {{ end }}
     {{ end}}
 
     <!-- case 6 -->
     {{ if .Tags }}
     <p></p>
+    <table  >
     {{ range $key, $value := .Tags}}
-    <a href="/hms/tags/{{ $key }}">{{ $key }}</a> ({{ $value }})<br>
+    <tr>
+        <td><a href="/hms/tags/{{ $key }}">{{ $key }}</a></td>
+        <td>({{ $value }})</td>
+    </tr>
     {{ end }}
+    </table>
     {{ end }}
 </body>
 </html>
