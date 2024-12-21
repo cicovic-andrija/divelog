@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style type="text/css">
         body {
-            margin: 2vh auto;
+            margin: 10px auto;
             max-width: 650px;
-            line-height: 1.6;
+            line-height: 1.4;
             font-size: 18px;
             font-family: "Lato", "Arial", "Helvetica", sans-serif;
             color:#444;
+            background-color: #FAFAFA;
             padding: 0 10px;
         }
         hr {
@@ -22,33 +23,47 @@
         h1 {
             margin: 0;
             margin-bottom: 4px;
+            color: #2C3E50;
         }
         a {
+            font-weight: bold;
+            color: #2C3E50;
             text-decoration: none;
         }
-        .styled-link {
+        a:hover {
+            color: #E74C3C;
+            text-decoration: none;
+        }
+        .nav-link {
+            color: #E74C3C;
+        }
+        .nav-link:hover {
+            color: #2C3E50;
+        }
+        .tag-link {
             display: inline-block;
             padding: 1px 10px;
             margin: 0;
             font-size: small;
             font-weight: bold;
-            background-color: green;
+            background-color: #E74C3C;
             color: white;
-            text-decoration: none;
             border-radius: 4px;
             transition: background-color 0.3s ease;
+        }
+        .tag-link:hover {
+            background-color: #2C3E50;
         }
     </style>
     <title>MyDives</title>
 </head>
 <body>
     <!-- Header -->
-    <hr>
     <div class="nav-links">
-        <a href="/hms/dives" class="link">Dives</a> ⋅
-        <a href="/hms/sites" class="link">Sites</a> ⋅
-        <a href="/hms/tags" class="link">Tags</a> ⋅
-        <a href="https://github.com/cicovic-andrija" target="_blank" class="link">GitHub</a>
+        <a href="/hms/dives" class="nav-link">Dives</a> |
+        <a href="/hms/sites" class="nav-link">Sites</a> |
+        <a href="/hms/tags" class="nav-link">Tags</a> |
+        <a href="https://github.com/cicovic-andrija" target="_blank" class="nav-link">GitHub</a>
     </div>
     <hr>
 
@@ -74,6 +89,7 @@
 
     <!-- case 3 -->
     {{ if .Sites }}
+    <p></p>
     {{ range .Sites }}
     <a href="/hms/sites/{{ .ID }}">⮞ {{ .Name }}</a><br>
     {{ end }}
@@ -82,7 +98,7 @@
     <!-- case 4 -->
     {{ if .Dive }}
     {{ range .Dive.Tags }}
-    <a class="styled-link" href="/hms/tags/{{ . }}">{{ . }}</a>
+    <a class="tag-link" href="/hms/tags/{{ . }}">{{ . }}</a>
     {{ end }}
     <table style="margin-top: 32px;">
         <tr>
@@ -178,6 +194,7 @@
 
     <!-- case 5 -->
     {{ if .Site }}
+    <h3>Geographic Information</h3>
     {{ range .Site.GeoLabels }}
     {{ . }},<br>
     {{ end }}
