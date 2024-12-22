@@ -37,14 +37,9 @@
             color: #2C3E50;
             text-decoration: none;
         }
-        table {
-            border-collapse: collapse;
-            border-left: 2px solid #ccc;
-        }
         table td {
-            border-left: none;
-            padding-left: 8px;
-            padding-bottom: 4px;
+            min-width: 120px;
+            padding-left: 12px;
         }
         a:hover {
             color: #E74C3C;
@@ -227,9 +222,9 @@
     {{ range .Site.GeoLabels }}
     <span class="tag">{{ . }}</span>
     {{ end }}
-    <h3>Dives</h3>
+    <h3>Dives at this site</h3>
     {{ range .Site.LinkedDives }}
-    <a href="/hms/dives/{{ .ID }}">{{ .DateTimeInPretty }}</a><br>
+    ~ <a href="/hms/dives/{{ .ID }}">{{ .DateTimeInPretty }}</a><br>
     {{ end }}
     {{ end}}
 
