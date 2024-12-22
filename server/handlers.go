@@ -185,13 +185,6 @@ func fetchTags(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderDives(w http.ResponseWriter, r *http.Request) {
-	// TODO: handle error
-	template, _ := template.ParseFiles("data/pagetemplate.html")
-	page := Page{
-		Title:      "Dives",
-		Supertitle: "All",
-	}
-
 	trips := make([]*Trip, 0, len(_inmemDatabase.DiveTrips))
 	for i := len(_inmemDatabase.DiveTrips) - 1; i > 0; i-- {
 		trip := &Trip{
@@ -209,20 +202,15 @@ func renderDives(w http.ResponseWriter, r *http.Request) {
 		}
 		trips = append(trips, trip)
 	}
-	page.Trips = trips
 
-	// TODO: handle error
-	template.Execute(w, page)
+	renderTemplate(w, Page{
+		Title:      "Dives",
+		Supertitle: "All",
+		Trips:      trips,
+	})
 }
 
 func renderSites(w http.ResponseWriter, r *http.Request) {
-	// TODO: handle error
-	template, _ := template.ParseFiles("data/pagetemplate.html")
-	page := Page{
-		Title:      "Dive sites",
-		Supertitle: "All",
-	}
-
 	heads := make([]*SiteHead, 0, len(_inmemDatabase.DiveSites))
 	for _, site := range _inmemDatabase.DiveSites[1:] {
 		heads = append(heads, &SiteHead{
@@ -233,59 +221,49 @@ func renderSites(w http.ResponseWriter, r *http.Request) {
 	sort.Slice(heads, func(i, j int) bool {
 		return heads[i].Name < heads[j].Name
 	})
-	page.Sites = heads
 
-	// TODO: handle error
-	template.Execute(w, page)
+	renderTemplate(w, Page{
+		Title:      "Dive sites",
+		Supertitle: "All",
+		Sites:      heads,
+	})
 }
 
 func renderDive(w http.ResponseWriter, r *http.Request) {
-	// TODO: handle error
-	template, _ := template.ParseFiles("data/pagetemplate.html")
-
 	// TODO: validate ID
 	id := r.PathValue("id")
 	diveID, _ := strconv.Atoi(id)
 	dive := _inmemDatabase.Dives[diveID]
 	site := _inmemDatabase.DiveSites[dive.DiveSiteID]
+
 	page := Page{
 		Title:      site.Name,
 		Supertitle: fmt.Sprintf("Dive %d", dive.Number),
 		Dive:       NewDiveFull(dive, site),
 	}
-
 	// fix it here because this is the only scenario where it's needed
 	// (although it's not a good design)
 	if page.Dive.NextID == len(_inmemDatabase.Dives) {
 		page.Dive.NextID = 0
 	}
 
-	// TODO: handle error
-	template.Execute(w, page)
+	renderTemplate(w, page)
 }
 
 func renderSite(w http.ResponseWriter, r *http.Request) {
-	// TODO: handle error
-	template, _ := template.ParseFiles("data/pagetemplate.html")
-
 	// TODO: validate ID
 	id := r.PathValue("id")
 	siteID, _ := strconv.Atoi(id)
 	site := _inmemDatabase.DiveSites[siteID]
-	page := Page{
+
+	renderTemplate(w, Page{
 		Title:      site.Name,
 		Supertitle: site.Coordinates,
 		Site:       NewSiteFull(site, _inmemDatabase.Dives[1:]),
-	}
-
-	// TODO: handle error
-	template.Execute(w, page)
+	})
 }
 
 func renderTags(w http.ResponseWriter, r *http.Request) {
-	// TODO: handle error
-	template, _ := template.ParseFiles("data/pagetemplate.html")
-
 	tags := make(map[string]int)
 	for _, dive := range _inmemDatabase.Dives[1:] {
 		for _, tag := range dive.Tags {
@@ -293,20 +271,14 @@ func renderTags(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	page := Page{
+	renderTemplate(w, Page{
 		Title:      "Tags",
 		Supertitle: "All",
 		Tags:       tags,
-	}
-
-	// TODO: handle error
-	template.Execute(w, page)
+	})
 }
 
 func renderTaggedDives(w http.ResponseWriter, r *http.Request) {
-	// TODO: handle error
-	template, _ := template.ParseFiles("data/pagetemplate.html")
-
 	// TODO: tag==""?
 	tag := r.PathValue("tag")
 	dives := []*DiveHead{}
@@ -322,14 +294,11 @@ func renderTaggedDives(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	page := Page{
+	renderTemplate(w, Page{
 		Title:      tag,
 		Supertitle: "Dives tagged with",
 		Dives:      dives,
-	}
-
-	// TODO: handle error
-	template.Execute(w, page)
+	})
 }
 
 func multiplexer() http.Handler {
@@ -419,6 +388,20 @@ func send(w http.ResponseWriter, data []byte) {
 	}
 	_, err := w.Write(data)
 	if err != nil {
-		trace(_error, "send: %v", err)
+		trace(_error, "http: send: %v", err)
+	}
+}
+
+func renderTemplate(w http.ResponseWriter, p Page) {
+	// TODO: assert page
+	template, err := template.ParseFiles("data/pagetemplate.html")
+	if err != nil {
+		trace(_error, "http: failed to parse template: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	err = template.Execute(w, p)
+	if err != nil {
+		trace(_error, "http: template: %v", err)
 	}
 }

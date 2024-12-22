@@ -99,7 +99,7 @@ func (c *control) signalFailure(err error) {
 
 func (c *control) startListening() error {
 	if c.encryptedTraffic {
-		// TODO
+		// TODO: return c.https.ListenAndServeTLS(...)
 		return nil
 	} else {
 		return c.https.ListenAndServe()

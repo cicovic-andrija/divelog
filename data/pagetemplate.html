@@ -28,6 +28,9 @@
             margin-bottom: 4px;
             color: #2C3E50;
         }
+        h3 {
+            color: #2C3E50;
+        }
         h4 {
             margin: 0;
             color: #2C3E50;
@@ -37,6 +40,7 @@
             color: #2C3E50;
             text-decoration: none;
         }
+
         table td {
             min-width: 120px;
             padding-left: 12px;
@@ -51,13 +55,16 @@
         .nav-link:hover {
             color: #2C3E50;
         }
+        .nav {
+            line-height: 1.8;
+        }
         .tag {
             display: inline-block;
             padding: 1px 10px;
             margin: 0;
             font-size: small;
             font-weight: bold;
-            background-color: #E74C3C;
+            background-color: #2C3E50;
             color: white;
             border-radius: 4px;
         }
@@ -82,10 +89,10 @@
 <body>
     <!-- Header -->
     <div class="nav-links">
-        <a href="/hms/dives" class="nav-link">Dives</a> │
-        <a href="/hms/sites" class="nav-link">Sites</a> │
-        <a href="/hms/tags" class="nav-link">Tags</a> │
-        <a href="https://github.com/cicovic-andrija" target="_blank" class="nav-link">GitHub</a>
+        <a href="/hms/dives" class="nav tag-link">🤿 Dives</a>
+        <a href="/hms/sites" class="nav tag-link">🌍 Sites</a>
+        <a href="/hms/tags" class="nav tag-link">🏷 Tags</a>
+        <a href="https://github.com/cicovic-andrija" target="_blank" class="nav tag-link">🡥 GitHub</a>
     </div>
     <hr>
 
@@ -128,19 +135,19 @@
     <table style="margin-top: 32px;">
         <tr>
             <td><b>Start time</b></td>
-            <td>{{ .Dive.DateTimeInPretty }}</td>
+            <td><b>🕙 {{ .Dive.DateTimeInPretty }}</b></td>
         </tr>
         <tr>
             <td><b>Dive site</b></td>
-            <td><a href="/hms/sites/{{ .Dive.DiveSiteID }}">{{ .Dive.DiveSiteName }}</a></td>
+            <td><a href="/hms/sites/{{ .Dive.DiveSiteID }}">🌍 {{ .Dive.DiveSiteName }}</a></td>
         </tr>
         <tr>
             <td><b>Rating</b></td>
-            <td>{{ .Dive.Rating5 }}/5</td>
+            <td>{{ if .Dive.Rating5 }}{{ .Dive.Rating5 }}/5 ⭐{{ end }}</td>
         </tr>
         <tr>
             <td><b>Visibility</b></td>
-            <td>{{ .Dive.Visibility5 }}/5</td>
+            <td>{{ if .Dive.Visibility5 }}{{ .Dive.Visibility5 }}/5 ⭐{{ end }}</td>
         </tr>
         <tr>
             <td><b>Water</b></td>
