@@ -254,6 +254,12 @@ func renderDive(w http.ResponseWriter, r *http.Request) {
 		Dive:       NewDiveFull(dive, site),
 	}
 
+	// fix it here because this is the only scenario where it's needed
+	// (although it's not a good design)
+	if page.Dive.NextID == len(_inmemDatabase.Dives) {
+		page.Dive.NextID = 0
+	}
+
 	// TODO: handle error
 	template.Execute(w, page)
 }

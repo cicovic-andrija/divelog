@@ -30,6 +30,8 @@ type DiveFull struct {
 	*Dive
 	DiveSiteName     string `json:"dive_site_name"`
 	DateTimeInPretty string `json:"date_time_in_pretty"`
+	NextID           int    `json:"-"`
+	PrevID           int    `json:"-"`
 }
 
 type Trip struct {
@@ -51,6 +53,8 @@ func NewDiveFull(dive *Dive, diveSite *DiveSite) *DiveFull {
 		Dive:             dive,
 		DiveSiteName:     diveSite.Name,
 		DateTimeInPretty: dive.datetime.Format("January 2 2006, 15:04"),
+		NextID:           dive.ID + 1,
+		PrevID:           dive.ID - 1,
 	}
 }
 

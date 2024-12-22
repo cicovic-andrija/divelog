@@ -79,6 +79,7 @@
         }
         .tag-link:hover {
             background-color: #2C3E50;
+            color: white;
         }
     </style>
     <title>MyDives</title>
@@ -127,6 +128,8 @@
     {{ range .Dive.Tags }}
     <a class="tag-link" href="/hms/tags/{{ . }}">{{ . }}</a>
     {{ end }}
+    {{ if .Dive.PrevID }}<a class="tag-link" href="/hms/dives/{{ .Dive.PrevID }}">previous</a>{{ end }}
+    {{ if .Dive.NextID }}<a class="tag-link" href="/hms/dives/{{ .Dive.NextID }}">next</a>{{ end }}
     <table style="margin-top: 32px;">
         <tr>
             <td><b>Start time</b></td>
@@ -217,8 +220,7 @@
             <td>{{ .Dive.DCModel }}</td>
         </tr>
     </table>
-    <p><a href="/hms/dives">[Previous]</a>   <a href="/hms/dives">[Next]</a></p>
-    {{ end}}
+    {{ end }}
 
     <!-- case 5 -->
     {{ if .Site }}
