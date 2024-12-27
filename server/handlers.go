@@ -97,7 +97,6 @@ func fetchTrips(w http.ResponseWriter, r *http.Request) {
 	for _, trip := range trips {
 		for _, dive := range _inmemDatabase.Dives[1:] {
 			if dive.DiveTripID == trip.ID {
-				// TODO: assert _inmemDatabase.DiveSites[dive.DiveSiteID]
 				trip.LinkedDives = append(trip.LinkedDives, NewDiveHead(dive, _inmemDatabase.DiveSites[dive.DiveSiteID]))
 			}
 		}
@@ -126,7 +125,6 @@ func fetchDives(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("headonly") == "true" {
 		heads := make([]*DiveHead, 0, len(_inmemDatabase.Dives))
 		for _, dive := range _inmemDatabase.Dives[1:] {
-			// TODO: assert _inmemDatabase.DiveSites[dive.DiveSiteID]
 			heads = append(heads, NewDiveHead(dive, _inmemDatabase.DiveSites[dive.DiveSiteID]))
 		}
 		resp, err = json.Marshal(heads)
@@ -134,7 +132,6 @@ func fetchDives(w http.ResponseWriter, r *http.Request) {
 		dives := []*DiveFull{}
 		for _, dive := range _inmemDatabase.Dives[1:] {
 			if dive.IsTaggedWith(tag) {
-				// TODO: assert _inmemDatabase.DiveSites[dive.DiveSiteID]
 				dives = append(dives, NewDiveFull(dive, _inmemDatabase.DiveSites[dive.DiveSiteID]))
 			}
 		}
@@ -393,7 +390,11 @@ func send(w http.ResponseWriter, data []byte) {
 }
 
 func renderTemplate(w http.ResponseWriter, p Page) {
-	// TODO: assert page
+	if !p.check() {
+		trace(_error, "http: incorrect internal page state")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	template, err := template.ParseFiles("data/pagetemplate.html")
 	if err != nil {
 		trace(_error, "http: failed to parse template: %v", err)

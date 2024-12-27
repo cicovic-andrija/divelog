@@ -67,20 +67,19 @@ func (p *SubsurfaceCallbackHandler) HandleDive(ddh subsurface.DiveDataHolder) in
 
 		datetime: ddh.DateTime,
 	}
-	// TODO: assert dive number is not IntNull
 	fmt.Printf("build: %v\n", dive)
+	assert(dive.ID == len(_inmemDatabase.Dives), "invalid Dive.ID")
 
 	siteID, ok := _inmemDatabase.sourceToSystemID[ddh.DiveSiteUUID]
-	if ok {
-		// TODO: assert site is not null
-		dive.DiveSiteID = siteID
-		fmt.Printf("link: %v -> %v\n", dive, _inmemDatabase.DiveSites[siteID])
-	} else {
-		// TODO
-	}
+	assert(ok, "DiveDataHolder.DiveSiteUUID is not mapped to DiveSite.ID")
+	dive.DiveSiteID = siteID
+	assert(siteID > 0 && siteID < len(_inmemDatabase.DiveSites), "invalid dive site ID mapping")
+	assert(_inmemDatabase.DiveSites[siteID] != nil, "DiveSite ptr is nil")
+	fmt.Printf("link: %v -> %v\n", dive, _inmemDatabase.DiveSites[siteID])
 
-	// TODO: assert dive trip is not null
 	dive.DiveTripID = ddh.DiveTripID
+	assert(ddh.DiveTripID > 0 && ddh.DiveTripID < len(_inmemDatabase.DiveTrips), "invalid dive trip ID")
+	assert(_inmemDatabase.DiveTrips[ddh.DiveTripID] != nil, "DiveTrip ptr is nil")
 	fmt.Printf("link: %v -> %v\n", dive, _inmemDatabase.DiveTrips[ddh.DiveTripID])
 
 	dive.Normalize()
@@ -100,6 +99,7 @@ func (p *SubsurfaceCallbackHandler) HandleDiveSite(uuid string, name string, coo
 		sourceID: uuid,
 	}
 	fmt.Printf("build: %v\n", site)
+	assert(site.ID == len(_inmemDatabase.DiveSites), "invalid DiveSite.ID")
 
 	_inmemDatabase.sourceToSystemID[site.sourceID] = site.ID
 	fmt.Printf("map: sourceToSystemID %q -> %d\n", site.sourceID, site.ID)
@@ -116,6 +116,7 @@ func (p *SubsurfaceCallbackHandler) HandleDiveTrip(label string) int {
 		Label: label,
 	}
 	fmt.Printf("build: %v\n", trip)
+	assert(trip.ID == len(_inmemDatabase.DiveTrips), "invalid DiveTrip.ID")
 
 	_inmemDatabase.DiveTrips = append(_inmemDatabase.DiveTrips, trip)
 	p.lastTripID++
@@ -124,13 +125,13 @@ func (p *SubsurfaceCallbackHandler) HandleDiveTrip(label string) int {
 }
 
 func (p *SubsurfaceCallbackHandler) HandleEnd() {
-	// TODO: assert len(slice) == lastID
-	// TODO: dives should be ordered by datetime
-	// TODO: trips should be partitioned correctly
+	assert(len(_inmemDatabase.Dives)-1 == p.lastDiveID, "invalid Dives slice length")
+	assert(len(_inmemDatabase.DiveSites)-1 == p.lastSiteID, "invalid DiveSites slice length")
+	assert(len(_inmemDatabase.DiveTrips)-1 == p.lastTripID, "invalid DiveTrips slice length")
 }
 
 func (p *SubsurfaceCallbackHandler) HandleGeoData(siteID int, cat int, label string) {
-	// TODO: assert site exists
+	assert(_inmemDatabase.DiveSites[siteID] != nil, "DiveSite ptr is nil")
 	site := _inmemDatabase.DiveSites[siteID]
 	for _, lbl := range site.GeoLabels {
 		if lbl == label {

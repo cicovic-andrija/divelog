@@ -9,7 +9,8 @@ import (
 	"time"
 )
 
-// TODO: detailed errors (wrap ErrInvalidFormat)
+// WIP
+// Not really, but the decoder is tested only on my own data files.
 
 const (
 	IntNull = 0
@@ -104,7 +105,7 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 
 	// <divesites>
 	if _, err = decoder.ExpectStart("divesites"); err != nil {
-		// the database may contain no dive site entries, but this
+		// DEVNOTE: the database may contain no dive site entries, but this
 		// decoder will report it as a format error
 		return err
 	}
@@ -138,8 +139,8 @@ func DecodeSubsurfaceDatabase(r io.Reader, h Handler) error {
 
 	// <dives>
 	if _, err = decoder.ExpectStart("dives"); err != nil {
-		// the database may contain no dive entries, or only dive entries, or combined trip and dive entries,
-		// but this decoder will report it as a format error
+		// DEVNOTE: the database may contain no dive entries, or only dive entries,
+		// or combined trip and dive entries, but this decoder will report it as a format error
 		return err
 	}
 

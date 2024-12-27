@@ -78,3 +78,26 @@ type Page struct {
 	Dive       *DiveFull
 	Site       *SiteFull
 }
+
+func (p *Page) check() bool {
+	c := 0
+	if p.Trips != nil {
+		c++
+	}
+	if p.Sites != nil {
+		c++
+	}
+	if p.Dives != nil {
+		c++
+	}
+	if p.Tags != nil {
+		c++
+	}
+	if p.Dive != nil {
+		c++
+	}
+	if p.Site != nil {
+		c++
+	}
+	return c == 1
+}

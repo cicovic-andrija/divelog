@@ -20,11 +20,13 @@ type control struct {
 	closed         bool
 	failure        chan error
 
-	https            *http.Server
-	endpoint         string
-	encryptedTraffic bool
-	localAPI         bool
-	corsAllowAll     bool
+	https             *http.Server
+	endpoint          string
+	encryptionKeyPath string
+	publicCertPath    string
+	encryptedTraffic  bool
+	localAPI          bool
+	corsAllowAll      bool
 }
 
 func (c *control) boot() {
