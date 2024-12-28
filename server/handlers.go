@@ -4,24 +4,32 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/fs"
 	"net/http"
+	"os"
 	"slices"
 	"sort"
 	"strconv"
-
-	"src.acicovic.me/divelog/webui"
 )
 
-// frontend-related handler
-func indexHandler(w http.ResponseWriter, r *http.Request) {
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/favicon.ico" {
-		rawFile, _ := webui.StaticFiles.ReadFile("dist/favicon.ico")
-		w.Write(rawFile)
+		var (
+			icon *os.File
+			fi   os.FileInfo
+		)
+		icon, err := os.Open("data/favicon.ico")
+		if err == nil {
+			fi, err = icon.Stat()
+		}
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		http.ServeContent(w, r, "favicon.ico", fi.ModTime(), icon)
 		return
 	}
-	rawFile, _ := webui.StaticFiles.ReadFile("dist/index.html")
-	w.Write(rawFile)
+
+	http.NotFound(w, r)
 }
 
 func fetchSites(w http.ResponseWriter, r *http.Request) {
@@ -60,9 +68,11 @@ func fetchSites(w http.ResponseWriter, r *http.Request) {
 }
 
 func fetchSite(w http.ResponseWriter, r *http.Request) {
-	// TODO: validate ID
-	id := r.PathValue("id")
-	siteID, _ := strconv.Atoi(id)
+	siteID := convertAndCheck(r.PathValue("id"), len(_inmemDatabase.DiveSites)-1)
+	if siteID == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	site := _inmemDatabase.DiveSites[siteID]
 
 	resp, err := json.Marshal(NewSiteFull(site, _inmemDatabase.Dives[1:]))
@@ -148,9 +158,11 @@ func fetchDives(w http.ResponseWriter, r *http.Request) {
 }
 
 func fetchDive(w http.ResponseWriter, r *http.Request) {
-	// TODO: validate ID
-	id := r.PathValue("id")
-	diveID, _ := strconv.Atoi(id)
+	diveID := convertAndCheck(r.PathValue("id"), len(_inmemDatabase.Dives)-1)
+	if diveID == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	dive := _inmemDatabase.Dives[diveID]
 
 	resp, err := json.Marshal(NewDiveFull(dive, _inmemDatabase.DiveSites[dive.DiveSiteID]))
@@ -227,9 +239,11 @@ func renderSites(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderDive(w http.ResponseWriter, r *http.Request) {
-	// TODO: validate ID
-	id := r.PathValue("id")
-	diveID, _ := strconv.Atoi(id)
+	diveID := convertAndCheck(r.PathValue("id"), len(_inmemDatabase.Dives)-1)
+	if diveID == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	dive := _inmemDatabase.Dives[diveID]
 	site := _inmemDatabase.DiveSites[dive.DiveSiteID]
 
@@ -248,9 +262,11 @@ func renderDive(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderSite(w http.ResponseWriter, r *http.Request) {
-	// TODO: validate ID
-	id := r.PathValue("id")
-	siteID, _ := strconv.Atoi(id)
+	siteID := convertAndCheck(r.PathValue("id"), len(_inmemDatabase.DiveSites)-1)
+	if siteID == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	site := _inmemDatabase.DiveSites[siteID]
 
 	renderTemplate(w, Page{
@@ -276,7 +292,6 @@ func renderTags(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderTaggedDives(w http.ResponseWriter, r *http.Request) {
-	// TODO: tag==""?
 	tag := r.PathValue("tag")
 	dives := []*DiveHead{}
 	for i := len(_inmemDatabase.Dives) - 1; i > 0; i-- {
@@ -303,27 +318,36 @@ func multiplexer() http.Handler {
 
 	mux.HandleFunc("GET /hms/dives", renderDives)
 	trace(_https, "handler registered for /hms/dives")
-	// TODO: Check what /hms/dives/{$} returns
+
+	mux.HandleFunc("GET /hms/dives/{$}", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/hms/dives", http.StatusMovedPermanently)
+	})
+	trace(_https, "handler registered for /hms/dives/")
 
 	mux.HandleFunc("GET /hms/sites", renderSites)
 	trace(_https, "handler registered for /hms/sites")
-	// TODO: Check what /hms/sites/{$} returns
+
+	mux.HandleFunc("GET /hms/sites/{$}", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/hms/sites", http.StatusMovedPermanently)
+	})
+	trace(_https, "handler registered for /hms/sites/")
 
 	mux.HandleFunc("GET /hms/tags", renderTags)
 	trace(_https, "handler registered for /hms/tags")
-	// TODO: Check what /hms/tags/{$} returns
+
+	mux.HandleFunc("GET /hms/tags/{$}", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/hms/tags", http.StatusMovedPermanently)
+	})
+	trace(_https, "handler registered for /hms/tags/")
 
 	mux.HandleFunc("GET /hms/dives/{id}", renderDive)
 	trace(_https, "handler registered for /hms/dives/{id}")
-	// TODO: ditto
 
 	mux.HandleFunc("GET /hms/sites/{id}", renderSite)
 	trace(_https, "handler registered for /hms/sites/{id}")
-	// TODO: ditto
 
 	mux.HandleFunc("GET /hms/tags/{tag}", renderTaggedDives)
 	trace(_https, "handler registered for /hms/tags/{tag}")
-	// TODO: ditto
 
 	// data handlers
 	mux.HandleFunc("GET /data/", func(w http.ResponseWriter, r *http.Request) {
@@ -333,35 +357,33 @@ func multiplexer() http.Handler {
 
 	mux.HandleFunc("GET /data/sites", fetchSites)
 	trace(_https, "handler registered for /data/sites")
-	// TODO: /data/sites/{$} returns 404
+	// DEVNOTE: /data/sites/{$} returns 404
 
 	mux.HandleFunc("GET /data/sites/{id}", fetchSite)
 	trace(_https, "handler registered for /data/sites/{id}")
 
 	mux.HandleFunc("GET /data/trips", fetchTrips)
 	trace(_https, "handler registered for /data/trips")
-	// TODO: /data/trips/{$} returns 404
+	// DEVNOTE: /data/trips/{$} returns 404
 
 	mux.HandleFunc("GET /data/dives", fetchDives)
 	trace(_https, "handler registered for /data/dives")
-	// TODO: /data/dives/{$} returns 404
+	// DEVNOTE: /data/dives/{$} returns 404
 
 	mux.HandleFunc("GET /data/dives/{id}", fetchDive)
 	trace(_https, "handler registered for /data/dives/{id}")
 
 	mux.HandleFunc("GET /data/tags", fetchTags)
 	trace(_https, "handler registered for /data/tags")
-	// TODO: /data/tags/{$} returns 404
+	// DEVNOTE: /data/tags/{$} returns 404
 
-	// index / root (frontend)
-	mux.HandleFunc("/", indexHandler)
+	mux.HandleFunc("GET /", defaultHandler)
 	trace(_https, "handler registered for /")
 
-	// static files (frontend)
-	staticFS, _ := fs.Sub(webui.StaticFiles, "dist")
-	httpFS := http.FileServer(http.FS(staticFS))
-	mux.Handle("/static/", httpFS)
-	trace(_https, "handler registered for /static/")
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/hms/dives", http.StatusMovedPermanently)
+	})
+	trace(_https, "handler registered for /{$}")
 
 	// local API handlers
 	if _serverControl.localAPI {
@@ -380,9 +402,6 @@ func multiplexer() http.Handler {
 
 func send(w http.ResponseWriter, data []byte) {
 	w.Header().Set("Content-Type", "application/json")
-	if _serverControl.corsAllowAll {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-	}
 	_, err := w.Write(data)
 	if err != nil {
 		trace(_error, "http: send: %v", err)
@@ -405,4 +424,12 @@ func renderTemplate(w http.ResponseWriter, p Page) {
 	if err != nil {
 		trace(_error, "http: template: %v", err)
 	}
+}
+
+func convertAndCheck(idStr string, max int) int {
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id < 1 || id > max {
+		return 0
+	}
+	return id
 }

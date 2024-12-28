@@ -26,7 +26,6 @@ type control struct {
 	publicCertPath    string
 	encryptedTraffic  bool
 	localAPI          bool
-	corsAllowAll      bool
 }
 
 func (c *control) boot() {
@@ -40,10 +39,6 @@ func (c *control) init() {
 		Addr:     c.endpoint,
 		Handler:  multiplexer(),
 		ErrorLog: log.New(io.Discard, "", 0),
-	}
-
-	if c.encryptedTraffic {
-		// TODO: private and public key path
 	}
 }
 
@@ -101,8 +96,7 @@ func (c *control) signalFailure(err error) {
 
 func (c *control) startListening() error {
 	if c.encryptedTraffic {
-		// TODO: return c.https.ListenAndServeTLS(...)
-		return nil
+		return c.https.ListenAndServeTLS(c.publicCertPath, c.encryptionKeyPath)
 	} else {
 		return c.https.ListenAndServe()
 	}

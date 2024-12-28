@@ -6,9 +6,6 @@ import (
 	"time"
 )
 
-// TODO: There are two yellowstone reefs, both with 1 dive
-// TODO: There is one Tugboat rozi with no dives
-
 type DiveLog struct {
 	Metadata         DiveLogMetadata
 	DiveSites        []*DiveSite

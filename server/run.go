@@ -15,17 +15,18 @@ func Run() {
 
 func readEnvironment() {
 	const (
-		modeEnvVar    = "DIVELOG_MODE"
-		dbPathEnvVar  = "DIVELOG_DBFILE_PATH"
-		dnsNameEnvVar = "DIVELOG_DNS_NAME"
-		portEnvVar    = "DIVELOG_PORT"
+		modeEnvVar        = "DIVELOG_MODE"
+		dbPathEnvVar      = "DIVELOG_DBFILE_PATH"
+		dnsNameEnvVar     = "DIVELOG_DNS_NAME"
+		portEnvVar        = "DIVELOG_PORT"
+		privateKeyPathVar = "DIVELOG_PRIVATE_KEY_PATH"
+		certPathVar       = "DIVELOG_CERT_PATH"
 	)
 
 	mode := os.Getenv(modeEnvVar)
 	trace(_env, "%s = %q", modeEnvVar, mode)
 	if mode == "dev" {
 		_serverControl.localAPI = true
-		_serverControl.corsAllowAll = true
 		_serverControl.encryptedTraffic = false
 		_serverControl.endpoint = "localhost:8072"
 	} else if mode == "" || mode == "prod" {
@@ -47,8 +48,24 @@ func readEnvironment() {
 			}
 		}
 
-		_serverControl.encryptedTraffic = true
+		privateKeyPath := os.Getenv(privateKeyPathVar)
+		trace(_env, "%s = %q", privateKeyPathVar, privateKeyPath)
+		if privateKeyPath == "" {
+			trace(_error, "%s is empty or undefined", privateKeyPathVar)
+			os.Exit(1)
+		}
+
+		certPath := os.Getenv(certPathVar)
+		trace(_env, "%s = %q", certPathVar, certPath)
+		if certPath == "" {
+			trace(_error, "%s is empty or undefined", certPathVar)
+			os.Exit(1)
+		}
+
 		_serverControl.endpoint = dnsName + ":" + port
+		_serverControl.encryptedTraffic = true
+		_serverControl.encryptionKeyPath = privateKeyPath
+		_serverControl.publicCertPath = certPath
 	} else {
 		trace(_error, "value of %s is invalid", modeEnvVar)
 		os.Exit(1)
