@@ -2,15 +2,6 @@
 
 ## Development
 
-### Live Frontend
-
 ```bash
-$ cd webui && npm run dev
-```
-
-### Server (Serving Frontend)
-
-```bash
-$ cd webui && npm run build
-$ cd .. && go run ./...
+DIVELOG_MODE="dev" DIVELOG_DBFILE_PATH="/path/to/subsurfacedata.xml" go run main.go
 ```
