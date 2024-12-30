@@ -17,7 +17,7 @@ func readEnvironment() {
 	const (
 		modeEnvVar        = "DIVELOG_MODE"
 		dbPathEnvVar      = "DIVELOG_DBFILE_PATH"
-		dnsNameEnvVar     = "DIVELOG_DNS_NAME"
+		dnsNameEnvVar     = "DIVELOG_DNS_NAME" // TODO: rename to DIVELOG_HOST
 		portEnvVar        = "DIVELOG_PORT"
 		privateKeyPathVar = "DIVELOG_PRIVATE_KEY_PATH"
 		certPathVar       = "DIVELOG_CERT_PATH"
