@@ -4,58 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style type="text/css">
+        html {
+            background-color: #E3E3E3;
+        }
         body {
-            margin: 10px auto;
+            margin: 0 auto;
+            min-height: 100vh;
             max-width: 650px;
             line-height: 1.4;
             font-size: 18px;
             font-family: "Lato", "Arial", "Helvetica", sans-serif;
-            color:#444;
-            background-color: #FAFAFA;
+            color: #008080;
+            background-color: #F9F9F9;
             padding: 0 10px;
         }
-        hr {
-            color: #ccc;
+        @media only screen and (max-width: 768px) {
+            body {
+                max-width: 100%;
+            }
+        }
+        header {
+            margin-bottom: 32px;
+            line-height: 1.8;
         }
         footer {
             margin-top: 32px;
+            line-height: 1.8;
         }
-        h1, h2, h3 {
-            line-height: 1.2;
-        }
-        h1 {
+        h1, h4 {
             margin: 0;
-            margin-bottom: 4px;
-            color: #2C3E50;
+            line-height: 1;
+            color: #FF7F50;
         }
-        h3 {
-            color: #2C3E50;
-        }
-        h4 {
-            margin: 0;
-            color: #2C3E50;
+        h2, h3 {
+            color: #FF7F50;
         }
         a {
-            font-weight: bold;
-            color: #2C3E50;
-            text-decoration: none;
+            color: #008080;
+            text-decoration: underline;
+        }
+        a:hover {
+            color: #FF7F50;
         }
         table td {
             min-width: 120px;
             padding-left: 12px;
-        }
-        a:hover {
-            color: #E74C3C;
-            text-decoration: none;
-        }
-        .nav-link {
-            color: #E74C3C;
-        }
-        .nav-link:hover {
-            color: #2C3E50;
-        }
-        .nav {
-            line-height: 1.8;
+            border-bottom: 1px #d3d3d3 solid;
         }
         .tag {
             display: inline-block;
@@ -63,7 +57,7 @@
             margin: 0;
             font-size: small;
             font-weight: bold;
-            background-color: #2C3E50;
+            background-color: #008080;
             color: white;
             border-radius: 4px;
         }
@@ -73,33 +67,34 @@
             margin: 0;
             font-size: small;
             font-weight: bold;
-            background-color: #E74C3C;
+            background-color: #FF7F50;
             color: white;
             border-radius: 4px;
             transition: background-color 0.3s ease;
+            text-decoration: none;
         }
         .tag-link:hover {
-            background-color: #2C3E50;
+            background-color: #008080;
             color: white;
         }
     </style>
     <title>MyDives</title>
 </head>
 <body>
-    <!-- Header -->
-    <div class="nav-links">
-        <a href="/hms/dives" class="nav tag-link">🤿 Dives</a>
-        <a href="/hms/sites" class="nav tag-link">🌍 Sites</a>
-        <a href="/hms/tags" class="nav tag-link">🏷 Tags</a>
-        <a href="https://github.com/cicovic-andrija/divelog" target="_blank" class="nav tag-link">🡥 GitHub</a>
-    </div>
-    <hr>
+    <header>
+            <a href="/hms/dives">dives</a>&nbsp;
+            <a href="/hms/sites">sites</a>&nbsp;
+            <a href="/hms/tags">tags</a>&nbsp;
+            <a href="/hms/about">about</a>&nbsp;
+            <a href="https://github.com/cicovic-andrija/divelog" target="_blank">code</a>&nbsp;
+    </header>
+
     {{ if .Supertitle }}<h4>{{ .Supertitle }}</h4>{{ end }}
     <h1>{{ .Title }}</h1>
     <!-- case 1 -->
     {{ if .Trips }}
     {{ range .Trips }}
-    <h3><i>{{ .Label }}</i></h3>
+    <h3>{{ .Label }}</h3>
     {{ range .LinkedDives }}
     <a href="/hms/dives/{{ .ID }}">{{ .ShortLabel }}</a><br>
     {{ end }}
@@ -129,11 +124,11 @@
     <table style="margin-top: 32px;">
         <tr>
             <td><b>Start time</b></td>
-            <td><b>🕙 {{ .Dive.DateTimeInPretty }}</b></td>
+            <td><b>{{ .Dive.DateTimeInPretty }}</b></td>
         </tr>
         <tr>
             <td><b>Dive site</b></td>
-            <td><a href="/hms/sites/{{ .Dive.DiveSiteID }}">🌍 {{ .Dive.DiveSiteName }}</a></td>
+            <td><a href="/hms/sites/{{ .Dive.DiveSiteID }}">{{ .Dive.DiveSiteName }}</a></td>
         </tr>
         <tr>
             <td><b>Rating</b></td>
@@ -238,7 +233,7 @@
 
     <h3>Dives at this site</h3>
     {{ range .Site.LinkedDives }}
-    ~ <a href="/hms/dives/{{ .ID }}">{{ .DateTimeInPretty }}</a><br>
+    <a href="/hms/dives/{{ .ID }}">{{ .DateTimeInPretty }}</a><br>
     {{ end }}
     {{ end}}
     <!-- case 6 -->
@@ -253,5 +248,32 @@
     {{ end }}
     </table>
     {{ end }}
+    <!-- case 7 -->
+    {{ if .About }}
+    <p>
+        i wrote a <a href="https://subsurface-divelog.org/" target="_blank">subsurface</a> xml database parser in
+        <a href="https://go.dev/" target="_blank">golang</a> as a fun way of exploring how the standard library parser
+        works, and then decided to build a web server for fetching the dive data and the hypermedia interface for browsing it.
+    </p>
+    <p>
+        this site is intended for personal use, but the implementation is open source and can be found by
+        following the <a href="https://github.com/cicovic-andrija/divelog" target="_blank">code</a> link in the header. i tested the parser and designed the necessary data structures
+        based on my dive log only - there's plenty of room for fixes and extensions.
+    </p>
+    <p>
+        if you do get interested
+        in using the code, please let me know about any bugs you encounter by sending me an <a href="mailto:cicovic.andrija@gmail.com">e-mail</a>.
+    </p>
+    <p>
+        some ideas that i intend to work on: fetch the database directly from subsurface servers (if possible),
+        display depth and temperature profiles on dive pages, add a historical view / stats page for aggregation functions etc.
+    </p>
+    <p>
+        happy diving!
+    </p>
+    {{ end }}
+    <footer>
+        <a href="#">top</a>
+    </footer>
 </body>
 </html>

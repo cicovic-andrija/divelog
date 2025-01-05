@@ -349,6 +349,15 @@ func multiplexer() http.Handler {
 	mux.HandleFunc("GET /hms/tags/{tag}", renderTaggedDives)
 	trace(_https, "handler registered for /hms/tags/{tag}")
 
+	mux.HandleFunc("GET /hms/about", func(w http.ResponseWriter, r *http.Request) {
+		renderTemplate(w, Page{
+			Title:      "this site",
+			Supertitle: "about",
+			About:      true,
+		})
+	})
+	trace(_https, "handler registered for /hms/about")
+
 	// data handlers
 	mux.HandleFunc("GET /data/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)

@@ -82,6 +82,7 @@ type Page struct {
 	Tags       map[string]int
 	Dive       *DiveFull
 	Site       *SiteFull
+	About      bool
 }
 
 func (p *Page) check() bool {
@@ -102,6 +103,9 @@ func (p *Page) check() bool {
 		c++
 	}
 	if p.Site != nil {
+		c++
+	}
+	if p.About {
 		c++
 	}
 	return c == 1
