@@ -2,12 +2,14 @@ package server
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
 var _serverControl control
 
 func Run() {
+	trace(_control, "%s v1.1.0", filepath.Base(os.Args[0]))
 	readEnvironment()
 	buildDatabase()
 	_serverControl.boot()
@@ -33,7 +35,7 @@ func readEnvironment() {
 		_serverControl.localAPI = true
 		_serverControl.encryptedTraffic = false
 		_serverControl.endpoint = "localhost:8072"
-		trace(_control, "in mode %s (HTTP): endpoint will be http://%s", mode, _serverControl.endpoint)
+		trace(_control, "in mode %q (HTTP): endpoint will be http://%s", mode, _serverControl.endpoint)
 	} else if mode == "prod" || mode == "prod-proxy-http" {
 		ipHost := os.Getenv(ipHostEnvVar)
 		trace(_env, "%s = %q", ipHostEnvVar, ipHost)
@@ -73,9 +75,9 @@ func readEnvironment() {
 			_serverControl.encryptionKeyPath = privateKeyPath
 			_serverControl.publicCertPath = certPath
 			_serverControl.encryptedTraffic = true
-			trace(_control, "in mode %s (HTTPS): endpoint will be https://%s", mode, _serverControl.endpoint)
+			trace(_control, "in mode %q (HTTPS): endpoint will be https://%s", mode, _serverControl.endpoint)
 		} else {
-			trace(_control, "in mode %s (HTTP): endpoint will be http://%s", mode, _serverControl.endpoint)
+			trace(_control, "in mode %q (HTTP): endpoint will be http://%s", mode, _serverControl.endpoint)
 		}
 	} else {
 		trace(_error, "value of %s is invalid", modeEnvVar)

@@ -67,7 +67,7 @@ func (p *SubsurfaceCallbackHandler) HandleDive(ddh subsurface.DiveDataHolder) in
 
 		datetime: ddh.DateTime,
 	}
-	fmt.Printf("build: %v\n", dive)
+	trace(_build, "%v", dive)
 	assert(dive.ID == len(_inmemDatabase.Dives), "invalid Dive.ID")
 
 	siteID, ok := _inmemDatabase.sourceToSystemID[ddh.DiveSiteUUID]
@@ -75,12 +75,12 @@ func (p *SubsurfaceCallbackHandler) HandleDive(ddh subsurface.DiveDataHolder) in
 	dive.DiveSiteID = siteID
 	assert(siteID > 0 && siteID < len(_inmemDatabase.DiveSites), "invalid dive site ID mapping")
 	assert(_inmemDatabase.DiveSites[siteID] != nil, "DiveSite ptr is nil")
-	fmt.Printf("link: %v -> %v\n", dive, _inmemDatabase.DiveSites[siteID])
+	trace(_link, "%v -> %v", dive, _inmemDatabase.DiveSites[siteID])
 
 	dive.DiveTripID = ddh.DiveTripID
 	assert(ddh.DiveTripID > 0 && ddh.DiveTripID < len(_inmemDatabase.DiveTrips), "invalid dive trip ID")
 	assert(_inmemDatabase.DiveTrips[ddh.DiveTripID] != nil, "DiveTrip ptr is nil")
-	fmt.Printf("link: %v -> %v\n", dive, _inmemDatabase.DiveTrips[ddh.DiveTripID])
+	trace(_link, "%v -> %v", dive, _inmemDatabase.DiveTrips[ddh.DiveTripID])
 
 	dive.Normalize()
 
@@ -98,11 +98,11 @@ func (p *SubsurfaceCallbackHandler) HandleDiveSite(uuid string, name string, coo
 
 		sourceID: uuid,
 	}
-	fmt.Printf("build: %v\n", site)
+	trace(_build, "%v", site)
 	assert(site.ID == len(_inmemDatabase.DiveSites), "invalid DiveSite.ID")
 
 	_inmemDatabase.sourceToSystemID[site.sourceID] = site.ID
-	fmt.Printf("map: sourceToSystemID %q -> %d\n", site.sourceID, site.ID)
+	trace(_map, "sourceToSystemID %q -> %d", site.sourceID, site.ID)
 
 	_inmemDatabase.DiveSites = append(_inmemDatabase.DiveSites, site)
 	p.lastSiteID++
@@ -115,7 +115,7 @@ func (p *SubsurfaceCallbackHandler) HandleDiveTrip(label string) int {
 		ID:    p.lastTripID + 1,
 		Label: label,
 	}
-	fmt.Printf("build: %v\n", trip)
+	trace(_build, "%v", trip)
 	assert(trip.ID == len(_inmemDatabase.DiveTrips), "invalid DiveTrip.ID")
 
 	_inmemDatabase.DiveTrips = append(_inmemDatabase.DiveTrips, trip)

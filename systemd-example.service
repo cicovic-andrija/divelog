@@ -1,0 +1,20 @@
+[Unit]
+Description=Dive Log Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Restart=always
+Environment="DIVELOG_MODE=prod-proxy-http"
+Environment="DIVELOG_DBFILE_PATH=/path/to/subsurfaceall.xml"
+Environment="DIVELOG_IP_HOST=127.0.0.1"
+Environment="DIVELOG_PORT=52000"
+User=uname
+WorkingDirectory=/srv
+ExecStart=/srv/mydivesrv
+StandardOutput=append:/srv/mydivesrv.log
+StandardError=append:/srv/mydivesrv.err.log
+
+[Install]
+WantedBy=multi-user.target
