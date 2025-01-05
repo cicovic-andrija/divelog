@@ -17,7 +17,7 @@ func readEnvironment() {
 	const (
 		modeEnvVar        = "DIVELOG_MODE"
 		dbPathEnvVar      = "DIVELOG_DBFILE_PATH"
-		dnsNameEnvVar     = "DIVELOG_DNS_NAME" // TODO: rename to DIVELOG_HOST
+		ipHostEnvVar      = "DIVELOG_IP_HOST"
 		portEnvVar        = "DIVELOG_PORT"
 		privateKeyPathVar = "DIVELOG_PRIVATE_KEY_PATH"
 		certPathVar       = "DIVELOG_CERT_PATH"
@@ -25,15 +25,20 @@ func readEnvironment() {
 
 	mode := os.Getenv(modeEnvVar)
 	trace(_env, "%s = %q", modeEnvVar, mode)
+	if mode == "" {
+		mode = "prod"
+	}
+
 	if mode == "dev" {
 		_serverControl.localAPI = true
 		_serverControl.encryptedTraffic = false
 		_serverControl.endpoint = "localhost:8072"
-	} else if mode == "" || mode == "prod" {
-		dnsName := os.Getenv(dnsNameEnvVar)
-		trace(_env, "%s = %q", dnsNameEnvVar, dnsName)
-		if dnsName == "" {
-			trace(_error, "%s is empty or undefined", dnsNameEnvVar)
+		trace(_control, "in mode %s (HTTP): endpoint will be http://%s", mode, _serverControl.endpoint)
+	} else if mode == "prod" || mode == "prod-proxy-http" {
+		ipHost := os.Getenv(ipHostEnvVar)
+		trace(_env, "%s = %q", ipHostEnvVar, ipHost)
+		if ipHost == "" {
+			trace(_error, "%s is empty or undefined", ipHostEnvVar)
 			os.Exit(1)
 		}
 
@@ -48,24 +53,30 @@ func readEnvironment() {
 			}
 		}
 
-		privateKeyPath := os.Getenv(privateKeyPathVar)
-		trace(_env, "%s = %q", privateKeyPathVar, privateKeyPath)
-		if privateKeyPath == "" {
-			trace(_error, "%s is empty or undefined", privateKeyPathVar)
-			os.Exit(1)
-		}
+		_serverControl.endpoint = ipHost + ":" + port
 
-		certPath := os.Getenv(certPathVar)
-		trace(_env, "%s = %q", certPathVar, certPath)
-		if certPath == "" {
-			trace(_error, "%s is empty or undefined", certPathVar)
-			os.Exit(1)
-		}
+		if mode == "prod" {
+			privateKeyPath := os.Getenv(privateKeyPathVar)
+			trace(_env, "%s = %q", privateKeyPathVar, privateKeyPath)
+			if privateKeyPath == "" {
+				trace(_error, "%s is empty or undefined", privateKeyPathVar)
+				os.Exit(1)
+			}
 
-		_serverControl.endpoint = dnsName + ":" + port
-		_serverControl.encryptedTraffic = true
-		_serverControl.encryptionKeyPath = privateKeyPath
-		_serverControl.publicCertPath = certPath
+			certPath := os.Getenv(certPathVar)
+			trace(_env, "%s = %q", certPathVar, certPath)
+			if certPath == "" {
+				trace(_error, "%s is empty or undefined", certPathVar)
+				os.Exit(1)
+			}
+
+			_serverControl.encryptionKeyPath = privateKeyPath
+			_serverControl.publicCertPath = certPath
+			_serverControl.encryptedTraffic = true
+			trace(_control, "in mode %s (HTTPS): endpoint will be https://%s", mode, _serverControl.endpoint)
+		} else {
+			trace(_control, "in mode %s (HTTP): endpoint will be http://%s", mode, _serverControl.endpoint)
+		}
 	} else {
 		trace(_error, "value of %s is invalid", modeEnvVar)
 		os.Exit(1)

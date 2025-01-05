@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"strings"
 )
 
 type All struct {
@@ -66,6 +67,10 @@ func NewSiteFull(site *DiveSite, allDives []*Dive) *SiteFull {
 		}
 	}
 	return s
+}
+
+func (s *SiteFull) URLLongLat() string {
+	return strings.Replace(s.Coordinates, " ", ",", 1)
 }
 
 type Page struct {
