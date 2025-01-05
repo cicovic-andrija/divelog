@@ -33,3 +33,9 @@ DIVELOG_IP_HOST="127.0.0.1" \
 DIVELOG_PORT="52000" \
 ./mydivesrv
 ```
+
+## Kill
+
+```bash
+pkill -SIGINT mydivesrv
+```

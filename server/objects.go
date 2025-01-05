@@ -83,6 +83,7 @@ type Page struct {
 	Dive       *DiveFull
 	Site       *SiteFull
 	About      bool
+	NotFound   bool
 }
 
 func (p *Page) check() bool {
@@ -106,6 +107,9 @@ func (p *Page) check() bool {
 		c++
 	}
 	if p.About {
+		c++
+	}
+	if p.NotFound {
 		c++
 	}
 	return c == 1

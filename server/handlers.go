@@ -241,7 +241,7 @@ func renderSites(w http.ResponseWriter, r *http.Request) {
 func renderDive(w http.ResponseWriter, r *http.Request) {
 	diveID := convertAndCheck(r.PathValue("id"), len(_inmemDatabase.Dives)-1)
 	if diveID == 0 {
-		w.WriteHeader(http.StatusBadRequest)
+		renderNotFound(w, "dive not found")
 		return
 	}
 	dive := _inmemDatabase.Dives[diveID]
@@ -264,7 +264,7 @@ func renderDive(w http.ResponseWriter, r *http.Request) {
 func renderSite(w http.ResponseWriter, r *http.Request) {
 	siteID := convertAndCheck(r.PathValue("id"), len(_inmemDatabase.DiveSites)-1)
 	if siteID == 0 {
-		w.WriteHeader(http.StatusBadRequest)
+		renderNotFound(w, "site not found")
 		return
 	}
 	site := _inmemDatabase.DiveSites[siteID]
@@ -306,10 +306,27 @@ func renderTaggedDives(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if len(dives) == 0 {
+		renderNotFound(w, "")
+		return
+	}
+
 	renderTemplate(w, Page{
 		Title:      tag,
 		Supertitle: "Dives tagged with",
 		Dives:      dives,
+	})
+}
+
+func renderNotFound(w http.ResponseWriter, title string) {
+	if title == "" {
+		title = "not found"
+	}
+
+	renderTemplate(w, Page{
+		Title:      title,
+		Supertitle: "404",
+		NotFound:   true,
 	})
 }
 
