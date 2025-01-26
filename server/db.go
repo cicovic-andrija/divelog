@@ -10,18 +10,16 @@ import (
 
 var _inmemDatabase DiveLog
 
-func buildDatabase() error {
+func buildDatabase() {
 	file, err := os.Open(_inmemDatabase.Metadata.Source)
 	if err != nil {
-		return fmt.Errorf("failed to open file %s: %v", _inmemDatabase.Metadata.Source, err)
+		panic(fmt.Errorf("failed to open file %s: %v", _inmemDatabase.Metadata.Source, err))
 	}
 	defer file.Close()
 
 	if err = subsurface.DecodeSubsurfaceDatabase(file, &SubsurfaceCallbackHandler{}); err != nil {
-		return fmt.Errorf("failed to decode database in %s: %v", _inmemDatabase.Metadata.Source, err)
+		panic(fmt.Errorf("failed to decode database in %s: %v", _inmemDatabase.Metadata.Source, err))
 	}
-
-	return nil
 }
 
 type SubsurfaceCallbackHandler struct {
@@ -42,6 +40,7 @@ func (p *SubsurfaceCallbackHandler) HandleDive(ddh subsurface.DiveDataHolder) in
 		ID:     p.lastDiveID + 1,
 		Number: ddh.DiveNumber,
 
+		Duration:        ddh.Duration,
 		Rating5:         ddh.Rating,
 		Visibility5:     ddh.Visibility,
 		Tags:            ddh.Tags,

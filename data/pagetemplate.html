@@ -128,6 +128,14 @@
             <td><b>{{ .Dive.DateTimeInPretty }}</b></td>
         </tr>
         <tr>
+            <td></td>
+            <td>({{ .Dive.Ago }})</td>
+        </tr>
+        <tr>
+            <td><b>Duration</b></td>
+            <td>{{ .Dive.Duration }}</td>
+        </tr>
+        <tr>
             <td><b>Dive site</b></td>
             <td><a href="/hms/sites/{{ .Dive.DiveSiteID }}">{{ .Dive.DiveSiteName }}</a></td>
         </tr>
@@ -240,7 +248,7 @@
     <!-- case 6 -->
     {{ if .Tags }}
     <p></p>
-    <table  >
+    <table>
     {{ range $key, $value := .Tags}}
     <tr>
         <td><a href="/hms/tags/{{ $key }}">{{ $key }}</a></td>

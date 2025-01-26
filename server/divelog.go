@@ -42,6 +42,7 @@ type Dive struct {
 	DiveSiteID int `json:"dive_site_id"`
 	DiveTripID int `json:"dive_trip_id"`
 
+	Duration        string   `json:"duration,omitempty"`
 	Rating5         int      `json:"rating5,omitempty"`
 	Visibility5     int      `json:"visibility5,omitempty"`
 	Tags            []string `json:"tags,omitempty"`
@@ -78,6 +79,11 @@ func (s *DiveSite) ShortName() string {
 
 func (t *DiveTrip) String() string {
 	return fmt.Sprintf("T%d:[%s]", t.ID, t.Label)
+}
+
+func (d *Dive) Ago() string {
+	years, months, days := durationToYMD(d.datetime, time.Now().UTC())
+	return fmt.Sprintf("%dy %dm %dd ago", years, months, days)
 }
 
 func (d *Dive) String() string {
@@ -118,4 +124,32 @@ var cylTypeMappings = map[string]string{
 	"AL100": "aluminium",
 	"HP100": "steel",
 	"HP130": "steel",
+}
+
+// not super precise, works better for UTC
+func durationToYMD(start time.Time, end time.Time) (years int, months int, days int) {
+	if end.Before(start) {
+		start, end = end, start
+	}
+
+	y1, m1, d1 := start.Date()
+	y2, m2, d2 := end.Date()
+	years = y2 - y1
+
+	if m2 < m1 || (m2 == m1 && d2 < d1) {
+		years--
+	}
+
+	months = int(end.Month()) - int(start.Month())
+	if d2 < d1 {
+		months--
+	}
+	if months < 0 {
+		months += 12
+	}
+
+	newStart := start.AddDate(years, months, 0)
+	days = int(end.Sub(newStart).Hours() / 24)
+
+	return
 }
