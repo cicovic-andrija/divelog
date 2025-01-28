@@ -24,6 +24,11 @@
                 max-width: 100%;
             }
         }
+        @media only screen and (min-width: 1200px) {
+            body {
+                max-width: 42%;
+            }
+        }
         header {
             margin-bottom: 32px;
             line-height: 1.8;
@@ -79,7 +84,7 @@
             color: white;
         }
     </style>
-    <title>MyDives</title>
+    <title>{{ .Title }}</title>
 </head>
 <body>
     <header>

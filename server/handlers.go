@@ -11,6 +11,8 @@ import (
 	"strconv"
 )
 
+var _pageTemplate = template.Must(template.ParseFiles("data/pagetemplate.html"))
+
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/favicon.ico" {
 		var (
@@ -440,15 +442,8 @@ func renderTemplate(w http.ResponseWriter, p Page) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	template, err := template.ParseFiles("data/pagetemplate.html")
-	if err != nil {
-		trace(_error, "http: failed to parse template: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	err = template.Execute(w, p)
-	if err != nil {
-		trace(_error, "http: template: %v", err)
+	if err := _pageTemplate.Execute(w, p); err != nil {
+		trace(_error, "http: render template: %v", err)
 	}
 }
 

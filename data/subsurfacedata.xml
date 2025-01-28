@@ -52,13 +52,6 @@
   <geo cat='5' origin='0' value='El Naaba'/>
   <geo cat='6' origin='3' value='El Naaba'/>
 </site>
-<site uuid='445d2fff' name='Tugboat Rozi Wreck, Ċirkewwa' gps='35.989480 14.326727'>
-  <geo cat='1' origin='0' value='Strait Of Sicilia'/>
-  <geo cat='2' origin='0' value='Malta'/>
-  <geo cat='3' origin='0' value='Il-Mellieħa'/>
-  <geo cat='5' origin='0' value='L-Aħrax tal-Għajn'/>
-  <geo cat='6' origin='3' value='L-Aħrax tal-Għajn'/>
-</site>
 <site uuid='445d3000' name='Tugboat Rozi Wreck, Ċirkewwa' gps='35.989480 14.326727'>
   <geo cat='1' origin='0' value='Strait Of Sicilia'/>
   <geo cat='2' origin='0' value='Malta'/>
@@ -282,13 +275,6 @@
   <geo cat='5' origin='0' value='Tala Bay'/>
   <geo cat='6' origin='3' value='Tala Bay'/>
 </site>
-<site uuid='dc5e55e6' name='Yellowstone Reef, Aqaba' gps='29.416510 34.974242'>
-  <geo cat='1' origin='0' value='Gulf Of Aqaba'/>
-  <geo cat='2' origin='0' value='Jordan'/>
-  <geo cat='3' origin='0' value='Aqaba'/>
-  <geo cat='5' origin='0' value='Tala Bay'/>
-  <geo cat='6' origin='3' value='Tala Bay'/>
-</site>
 <site uuid='e915c443' name='Santa Marija Caves, Comino' gps='36.018137 14.341075'>
   <geo cat='1' origin='0' value='Strait Of Sicilia'/>
   <geo cat='2' origin='0' value='Malta'/>
@@ -365,7 +351,7 @@
 </dive>
 </trip>
 <trip date='2022-08-22' time='09:30:39' location='Montenegro 2022'>
-<dive number='5' rating='3' visibility='5' sac='16.881 l/min' otu='13' cns='5%' tags='boat' divesiteid='d30fdf58' watersalinity='1030 g/l' date='2022-08-22' time='09:30:39' duration='35:00 min'>
+<dive number='5' rating='3' visibility='5' sac='16.881 l/min' otu='13' cns='5%' tags='zodiac' divesiteid='d30fdf58' watersalinity='1030 g/l' date='2022-08-22' time='09:30:39' duration='35:00 min'>
   <divemaster>SDT Svet Ronjenja, Branka</divemaster>
   <notes>First ocean dive.</notes>
   <suit>7mm wetsuit</suit>
@@ -380,7 +366,7 @@
   <sample time='35:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='6' rating='4' visibility='4' otu='8' cns='6%' tags='boat' divesiteid='1917d9e1' watersalinity='1030 g/l' date='2022-08-22' time='14:30:39' duration='46:00 min'>
+<dive number='6' rating='4' visibility='4' otu='8' cns='6%' tags='zodiac' divesiteid='1917d9e1' watersalinity='1030 g/l' date='2022-08-22' time='14:30:39' duration='46:00 min'>
   <divemaster>SDT Svet Ronjenja, Branka</divemaster>
   <suit>7mm wetsuit</suit>
   <cylinder size='12.607 l' workpressure='227.527 bar' description='AL100' depth='65.734 m' />
@@ -394,7 +380,7 @@
   <sample time='46:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='7' rating='4' visibility='3' otu='12' cns='5%' tags='boat' divesiteid='5734415f' watersalinity='1030 g/l' date='2022-08-23' time='09:30:34' duration='35:00 min'>
+<dive number='7' rating='4' visibility='3' otu='12' cns='5%' tags='zodiac' divesiteid='5734415f' watersalinity='1030 g/l' date='2022-08-23' time='09:30:34' duration='35:00 min'>
   <divemaster>SDT Svet Ronjenja, Branka</divemaster>
   <notes>There is a part of an aircraft engine block in the water near the island.</notes>
   <suit>7mm wetsuit</suit>
@@ -409,7 +395,7 @@
   <sample time='35:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='8' rating='1' visibility='5' sac='14.794 l/min' otu='18' cns='7%' tags='boat' divesiteid='b6629e24' watersalinity='1030 g/l' date='2022-08-23' time='15:18:17' duration='45:00 min'>
+<dive number='8' rating='1' visibility='5' sac='14.794 l/min' otu='18' cns='7%' tags='zodiac' divesiteid='b6629e24' watersalinity='1030 g/l' date='2022-08-23' time='15:18:17' duration='45:00 min'>
   <divemaster>SDT Svet Ronjenja, Suba</divemaster>
   <buddy>Nemanja</buddy>
   <notes>Search for the catamaran (failed). High air consumption (panic) that led to buddy sharing at the end of the dive.</notes>
@@ -425,7 +411,7 @@
   <sample time='45:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='9' visibility='5' sac='11.519 l/min' otu='11' cns='6%' tags='boat' divesiteid='b6629e24' watersalinity='1030 g/l' date='2022-08-24' time='09:30:32' duration='50:00 min'>
+<dive number='9' visibility='5' sac='11.519 l/min' otu='11' cns='6%' tags='zodiac' divesiteid='b6629e24' watersalinity='1030 g/l' date='2022-08-24' time='09:30:32' duration='50:00 min'>
   <divemaster>SDT Svet Ronjenja, Janez</divemaster>
   <notes>Search for the catamaran continued.</notes>
   <suit>7mm wetsuit</suit>
@@ -440,7 +426,7 @@
   <sample time='50:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='10' visibility='5' otu='11' cns='7%' tags='boat' divesiteid='f528e87c' watersalinity='1030 g/l' date='2022-08-24' time='15:00:42' duration='49:00 min'>
+<dive number='10' visibility='5' otu='11' cns='7%' tags='zodiac' divesiteid='f528e87c' watersalinity='1030 g/l' date='2022-08-24' time='15:00:42' duration='49:00 min'>
   <divemaster>SDT Svet Ronjenja, Vuk</divemaster>
   <notes>Dive site coordinates are probably incorrect.</notes>
   <suit>7mm wetsuit</suit>
@@ -455,7 +441,7 @@
   <sample time='49:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='11' visibility='5' otu='9' cns='6%' tags='boat' divesiteid='d6635840' watersalinity='1030 g/l' date='2022-08-25' time='09:30:26' duration='46:00 min'>
+<dive number='11' visibility='5' otu='9' cns='6%' tags='zodiac' divesiteid='d6635840' watersalinity='1030 g/l' date='2022-08-25' time='09:30:26' duration='46:00 min'>
   <divemaster>SDT Svet Ronjenja, Vuk</divemaster>
   <suit>7mm wetsuit</suit>
   <cylinder size='12.607 l' workpressure='227.527 bar' description='AL100' depth='65.734 m' />
@@ -469,7 +455,7 @@
   <sample time='46:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='12' rating='5' visibility='5' sac='14.638 l/min' otu='9' cns='5%' tags='boat' divesiteid='b6629e24' watersalinity='1030 g/l' date='2022-08-25' time='14:30:08' duration='36:00 min'>
+<dive number='12' rating='5' visibility='5' sac='14.638 l/min' otu='9' cns='5%' tags='zodiac' divesiteid='b6629e24' watersalinity='1030 g/l' date='2022-08-25' time='14:30:08' duration='36:00 min'>
   <divemaster>SDT Svet Ronjenja, Nikola</divemaster>
   <notes>Finally found the catamaran. There is a conger living inside the wreck.</notes>
   <suit>7mm wetsuit</suit>
@@ -485,7 +471,7 @@
   <sample time='36:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='13' rating='4' visibility='4' sac='10.010 l/min' otu='24' cns='8%' tags='boat' divesiteid=' be01df8' watersalinity='1030 g/l' date='2022-08-26' time='10:00:03' duration='48:00 min'>
+<dive number='13' rating='4' visibility='4' sac='10.010 l/min' otu='24' cns='8%' tags='zodiac' divesiteid=' be01df8' watersalinity='1030 g/l' date='2022-08-26' time='10:00:03' duration='48:00 min'>
   <divemaster>SDT Svet Ronjenja, Mladen</divemaster>
   <suit>7mm wetsuit</suit>
   <cylinder size='15.713 l' workpressure='237.318 bar' description='HP130' start='200.0 bar' end='90.0 bar' depth='65.734 m' />
@@ -536,7 +522,7 @@
   <sample time='48:00 min' depth='0.0 m' />
   </divecomputer>
 </dive>
-<dive number='16' rating='4' visibility='5' sac='15.427 l/min' otu='8' cns='4%' tags='shore' divesiteid='dc5e55e6' watersalinity='1030 g/l' date='2022-11-15' time='10:00:20' duration='38:00 min'>
+<dive number='16' rating='4' visibility='5' sac='15.427 l/min' otu='8' cns='4%' tags='shore' divesiteid='dc5e55e5' watersalinity='1030 g/l' date='2022-11-15' time='10:00:20' duration='38:00 min'>
   <divemaster>Red Sea Dive Centre, Amir</divemaster>
   <buddy>Dajana</buddy>
   <notes>Yellowstone Reef North.</notes>

@@ -9,7 +9,7 @@ import (
 var _serverControl control
 
 func Run() {
-	trace(_control, "main: start: %s v1.1.0", filepath.Base(os.Args[0]))
+	trace(_control, "main: start: %s v1.2", filepath.Base(os.Args[0]))
 	readEnvironment()
 	buildDatabase()
 	_serverControl.boot()
